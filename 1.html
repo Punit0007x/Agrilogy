@@ -1,0 +1,1912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <title>Agrilogy - Bridging the Digital Divide in Agriculture</title>
+    <script src="https://cdn.lordicon.com/lordicon.js"></script>
+    <meta name="description" content="Agrilogy connects offline and online farmers through hybrid technology, bringing real-time insights, market data, and AI-powered guidance to every field. Now featuring an Offline AI Soil Monitor.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        :root {
+            --primary: 142 76% 36%;
+            --primary-glow: 142 68% 48%;
+            --secondary: 48 95% 76%;
+            --accent: 33 95% 54%;
+            --background: 60 9% 97%;
+            --foreground: 24 10% 10%;
+            --card: 0 0% 100%;
+            --muted: 60 5% 96%;
+            --border: 24 6% 90%;
+        }
+        
+        body {
+            background: hsl(var(--background));
+            color: hsl(var(--foreground));
+        }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes glow-pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(151, 191, 88, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(151, 191, 88, 0.6); }
+        }
+        
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .float { animation: float 3s ease-in-out infinite; }
+        .glow-pulse { animation: glow-pulse 2s ease-in-out infinite; }
+        .fade-in { animation: fade-in 0.6s ease-out forwards; }
+        
+        .glow-on-hover:hover, .glass-panel:hover {
+            box-shadow: 0 0 30px rgba(151, 191, 88, 0.4);
+            transform: translateY(-4px);
+            transition: all 0.3s ease-out;
+        }
+        
+        .hero-bg {
+            background: linear-gradient(135deg, rgba(216, 240, 184, 0.3), rgba(151, 191, 88, 0.2)),
+                        url('farmpic.jpeg');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .status-good { color: hsl(var(--primary)); }
+        .status-warning { color: hsl(var(--accent)); }
+        .status-critical { color: #ef4444; }
+
+        /* Styles for the new offline module footer */
+        .offline-footer-btn:hover {
+            background-color: #f3f4f6; /* Equivalent to hover:bg-gray-100 */
+        }
+
+        /* Styles for the new side plant animation */
+        #side-plant-container {
+            opacity: 0.7;
+        }
+
+        /* --- NEW: AgriMitra Flip Card Styles --- */
+        .flip-card {
+            perspective: 1000px;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.7s;
+            transform-style: preserve-3d;
+        }
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden; /* Safari */
+            backface-visibility: hidden;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+
+        /* --- NEW: How It Works Modal Styles --- */
+        #how-it-works-modal {
+            transition: opacity 0.3s ease;
+        }
+        #how-it-works-modal.hidden {
+            pointer-events: none;
+        }
+        #how-it-works-content {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            transform: scale(0.95);
+            opacity: 0;
+        }
+        #how-it-works-modal:not(.hidden) #how-it-works-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+        #close-how-it-works-btn {
+            font-size: 2rem;
+            line-height: 1;
+        }
+
+        /* --- NEW: Sell Now Modal Styles --- */
+        #sell-now-modal {
+            transition: opacity 0.3s ease;
+        }
+        #sell-now-modal.hidden {
+            pointer-events: none;
+        }
+        #sell-now-content {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            transform: scale(0.95);
+            opacity: 0;
+        }
+        #sell-now-modal:not(.hidden) #sell-now-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+        #close-sell-now-btn {
+            font-size: 2rem;
+            line-height: 1;
+        }
+
+        /* --- NEW: Farm Plot Card Styles --- */
+        .plot-card {
+            @apply relative p-4 rounded-2xl overflow-hidden transition-all duration-300 ease-in-out;
+            background-size: cover;
+            background-position: center;
+        }
+        .plot-card::before {
+            content: '';
+            @apply absolute inset-0 bg-black/50;
+        }
+        .plot-card-content {
+            @apply relative z-10;
+        }
+        .plot-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .plot-card:hover::before {
+            @apply bg-black/40;
+        }
+
+        /* --- NEW: Flat & Visually Appealing Farm View Styles --- */
+        .farm-layout {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 1rem;
+            height: 600px;
+        }
+        .flat-plot {
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease-out;
+            position: relative;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .flat-plot:hover, .flat-plot.active {
+            transform: scale(1.03);
+            border-color: hsl(var(--primary));
+            box-shadow: 0 0 20px rgba(151, 191, 88, 0.5);
+        }
+        .plot-pattern {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-size: 20px 20px;
+            z-index: 0;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="glass-panel sticky top-0 z-50 border-b">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between gap-8">
+                <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-8 h-8" style="color: hsl(var(--primary))" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span class="text-2xl font-bold" style="color: hsl(var(--primary))">Agrilogy</span>
+                    </div>
+                    <!-- NEW: Farmer Selector Dropdown -->
+                    <div>
+                        <label for="farmer-selector" class="text-xs font-semibold text-gray-500">Current Farmer</label>
+                        <select id="farmer-selector" class="block w-full -mt-1 p-1 border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-green-600 bg-transparent font-semibold text-lg">
+                            <option value="farmer1">Ramesh Kumar</option>
+                            <option value="farmer2">Sita Devi</option>
+                            <option value="farmer3">Vijay Singh</option>
+                            <option value="farmer4">Anjali Patel</option>
+                            <option value="farmer5">Balwinder Singh</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="hidden md:flex gap-4">
+                    <a href="#home" class="px-4 py-2 rounded-lg hover:bg-white/50 transition">Home</a>
+                    <a href="#about" id="nav-about" class="px-4 py-2 rounded-lg hover:bg-white/50 transition">About AgriMitra</a>
+                    <a href="#dashboard" class="px-4 py-2 rounded-lg hover:bg-white/50 transition">Dashboard</a>
+                    <a href="#ai-advisor" class="px-4 py-2 rounded-lg hover:bg-white/50 transition">AI Advisor</a>
+                    <a href="#marketlink" class="px-4 py-2 rounded-lg hover:bg-white/50 transition">MarketLink</a>
+                    <a href="#govt-schemes" class="px-4 py-2 rounded-lg hover:bg-white/50 transition">Schemes</a>
+                    <a href="#ivr-helpline" class="px-4 py-2 rounded-lg hover:bg-white/50 transition">Helpline</a>
+                    <a href="#soil-monitor" class="px-4 py-2 rounded-lg hover:bg-white/50 transition">Soil Monitor</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-bg min-h-screen flex items-center justify-center relative overflow-hidden">
+        <div class="container mx-auto px-6 py-20 relative z-10">
+            <div class="max-w-4xl mx-auto text-center fade-in">
+                <div class="inline-block px-6 py-2 rounded-full glass-panel mb-6">
+                    <span style="color: hsl(var(--primary))" class="font-semibold">🌍 Hybrid AgriTech Platform</span>
+                </div>
+                
+                <h1 class="text-6xl font-bold mb-6 leading-tight">
+                    Bridging the Digital Divide in <span style="color: hsl(var(--primary))">Agriculture</span>
+                </h1>
+                
+                <p class="text-xl mb-10 opacity-80 max-w-2xl mx-auto">
+                    Connecting farmers with real-time insights, market data, and AI-powered guidance—whether online or offline.
+                </p>
+                
+                <div class="flex gap-4 justify-center mb-12">
+                    <a href="#dashboard" class="px-8 py-4 rounded-lg font-semibold transition shadow-lg" style="background: hsl(var(--primary)); color: white;">
+                        Launch Dashboard
+                    </a>
+                    <a href="#soil-monitor" class="px-8 py-4 rounded-lg glass-panel font-semibold transition hover:shadow-lg">
+                        Explore Features
+                    </a>
+                </div>
+                
+                <!-- Floating Icons -->
+                <div class="flex justify-center gap-8 flex-wrap">
+                    <div class="float glass-panel p-4 rounded-full" style="animation-delay: 0s;">
+                        <svg class="w-6 h-6" style="color: hsl(var(--primary))" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"></path>
+                        </svg>
+                    </div>
+                    <div class="float glass-panel p-4 rounded-full" style="animation-delay: 0.5s;">
+                        <svg class="w-6 h-6" style="color: hsl(var(--accent))" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
+                        </svg>
+                    </div>
+                    <div class="float glass-panel p-4 rounded-full" style="animation-delay: 1s;">
+                        <svg class="w-6 h-6" style="color: hsl(var(--primary-glow))" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- AgriMitra Program Section -->
+    <section id="about" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12" data-animate-children>
+                <h2 class="text-4xl font-bold mb-4">The AgriMitra Program</h2>
+                <p class="text-lg opacity-70">Empowering communities with local expertise and support.</p>
+            </div>
+
+            <!-- NEW: Button to show "How It Works" -->
+            <div class="text-center mb-12">
+                <button id="show-how-it-works-btn" class="px-6 py-3 rounded-lg font-semibold transition shadow-md bg-white border hover:bg-gray-100">
+                    See How It Works
+                </button>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 h-[300px] md:h-[250px]" data-animate-children>
+                
+                <!-- Card 1: Train Local Champions -->
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front glass-panel p-8 rounded-2xl text-center flex flex-col justify-center">
+                            <i data-lucide="users" class="w-12 h-12 mx-auto mb-4" style="color: hsl(var(--primary))"></i>
+                            <h3 class="text-xl font-bold mb-2">Train Local Champions</h3>
+                            <p class="text-sm opacity-80">We train one tech-savvy youth—an 'AgriMitra'—per 10 farmers.</p>
+                        </div>
+                        <div class="flip-card-back glass-panel p-8 rounded-2xl text-center flex flex-col justify-center items-center bg-green-50">
+                            <p class="text-sm font-semibold text-green-800 mb-2">Key Outcome:</p>
+                            <p class="text-lg font-bold text-green-900">Rural Employment & Local Expertise</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Offline Data Recording -->
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front glass-panel p-8 rounded-2xl text-center flex flex-col justify-center">
+                            <i data-lucide="tablet-smartphone" class="w-12 h-12 mx-auto mb-4" style="color: hsl(var(--accent))"></i>
+                            <h3 class="text-xl font-bold mb-2">Record Data for All</h3>
+                            <p class="text-sm opacity-80">The AgriMitra uses our app to record data for farmers, even completely offline.</p>
+                        </div>
+                        <div class="flip-card-back glass-panel p-8 rounded-2xl text-center flex flex-col justify-center items-center bg-yellow-50">
+                            <p class="text-sm font-semibold text-yellow-800 mb-2">Key Outcome:</p>
+                            <p class="text-lg font-bold text-yellow-900">100% Farmer Inclusion</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Effortless Syncing -->
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front glass-panel p-8 rounded-2xl text-center flex flex-col justify-center">
+                            <i data-lucide="bluetooth" class="w-12 h-12 mx-auto mb-4" style="color: #3b82f6"></i>
+                            <h3 class="text-xl font-bold mb-2">Effortless Syncing</h3>
+                            <p class="text-sm opacity-80">Offline data is automatically uploaded when the AgriMitra is near a sync point.</p>
+                        </div>
+                        <div class="flip-card-back glass-panel p-8 rounded-2xl text-center flex flex-col justify-center items-center bg-blue-50">
+                            <p class="text-sm font-semibold text-blue-800 mb-2">Key Outcome:</p>
+                            <p class="text-lg font-bold text-blue-900">Seamless Data Flow</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Bridge the Gap -->
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front glass-panel p-8 rounded-2xl text-center flex flex-col justify-center">
+                            <i data-lucide="presentation" class="w-12 h-12 mx-auto mb-4" style="color: hsl(var(--primary-glow))"></i>
+                            <h3 class="text-xl font-bold mb-2">Bridge the Knowledge Gap</h3>
+                            <p class="text-sm opacity-80">The AgriMitra explains AI-generated reports and advice to each farmer in person.</p>
+                        </div>
+                        <div class="flip-card-back glass-panel p-8 rounded-2xl text-center flex flex-col justify-center items-center bg-purple-50">
+                            <p class="text-sm font-semibold text-purple-800 mb-2">Key Outcome:</p>
+                            <p class="text-lg font-bold text-purple-900">Actionable Insights for All</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="py-20 bg-gradient-to-b from-white to-gray-50">
+        <div class="container mx-auto px-6" data-animate-children>
+            <h2 class="text-4xl font-bold text-center mb-12">Farm Overview</h2>
+            
+            <div class="grid lg:grid-cols-3 gap-8 items-start">
+                <!-- Left Side: Interactive Farm Map -->
+                <div class="lg:col-span-2 glass-panel p-6 rounded-2xl">
+                    <div class="farm-layout">
+                        <!-- Plot A -->
+                        <div class="flat-plot" data-plot="plotA">
+                            <div class="plot-pattern" style="background-image: radial-gradient(#f97316 1px, transparent 1px);"></div>
+                            <i data-lucide="carrot" class="w-10 h-10 relative z-10"></i>
+                            <p class="font-bold relative z-10 mt-2"></p>
+                        </div>
+                        <!-- Plot B -->
+                        <div class="flat-plot" data-plot="plotB">
+                            <div class="plot-pattern" style="background-image: repeating-linear-gradient(45deg, #ca8a04, #ca8a04 1px, transparent 1px, transparent 10px);"></div>
+                            <i data-lucide="barley" class="w-10 h-10 relative z-10"></i>
+                            <p class="font-bold relative z-10 mt-2"></p>
+                        </div>
+                        <!-- Plot C -->
+                        <div class="flat-plot" data-plot="plotC">
+                            <div class="plot-pattern" style="background-image: linear-gradient(#94a3b8 1px, transparent 1px), linear-gradient(to right, #94a3b8 1px, transparent 1px);"></div>
+                            <i data-lucide="shovel" class="w-10 h-10 relative z-10"></i>
+                            <p class="font-bold relative z-10 mt-2"></p>
+                        </div>
+                        <!-- Plot D -->
+                        <div class="flat-plot" data-plot="plotD">
+                            <div class="plot-pattern" style="background-image: repeating-conic-gradient(#84cc16 0% 25%, transparent 0% 50%); background-size: 30px 30px;"></div>
+                            <i data-lucide="seedling" class="w-10 h-10 relative z-10"></i>
+                            <p class="font-bold relative z-10 mt-2"></p>
+                        </div>
+                        <!-- Plot E -->
+                        <div class="flat-plot" data-plot="plotE">
+                            <div class="plot-pattern" style="background-image: repeating-linear-gradient(-45deg, #d97706, #d97706 1px, transparent 1px, transparent 6px);"></div>
+                            <i data-lucide="leaf" class="w-10 h-10 text-amber-600 relative z-10"></i>
+                            <p class="font-bold text-amber-800 relative z-10 mt-2">Plot E: Potatoes</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side: Info & Actions Panel -->
+                <div class="space-y-8 lg:sticky top-24">
+                    <!-- Field Conditions -->
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <h3 id="plot-details-title" class="text-2xl font-bold mb-4">Overall Conditions</h3>
+                        <div id="plot-details-content">
+                            <!-- Default Content -->
+                            <p class="text-sm text-gray-600">Click on a plot for specific details.</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div class="text-center p-3 bg-gray-100 rounded-lg">
+                                <p class="text-sm opacity-70">Temperature</p>
+                                <p class="text-2xl font-bold">28°C</p>
+                            </div>
+                            <div class="text-center p-3 bg-gray-100 rounded-lg">
+                                <p class="text-sm opacity-70">Humidity</p>
+                                <p class="text-2xl font-bold">68%</p>
+                            </div>
+                        </div>
+                        <h4 class="font-bold text-center text-sm opacity-70 mb-2">5-Day Forecast</h4>
+                        <div class="grid grid-cols-5 gap-2 text-center">
+                            <div><p class="font-bold text-xs">Today</p><i data-lucide="sun" class="w-6 h-6 mx-auto my-1 text-yellow-500"></i><p class="text-sm font-semibold">28°</p></div>
+                            <div><p class="font-bold text-xs">Tom</p><i data-lucide="cloud-sun" class="w-6 h-6 mx-auto my-1 text-gray-500"></i><p class="text-sm font-semibold">26°</p></div>
+                            <div><p class="font-bold text-xs">Wed</p><i data-lucide="cloud-rain" class="w-6 h-6 mx-auto my-1 text-blue-500"></i><p class="text-sm font-semibold">24°</p></div>
+                            <div><p class="font-bold text-xs">Thu</p><i data-lucide="cloud-lightning" class="w-6 h-6 mx-auto my-1 text-purple-500"></i><p class="text-sm font-semibold">25°</p></div>
+                            <div><p class="font-bold text-xs">Fri</p><i data-lucide="sun" class="w-6 h-6 mx-auto my-1 text-yellow-500"></i><p class="text-sm font-semibold">27°</p></div>
+                        </div>
+                    </div>
+
+                    <!-- AI Recommendations -->
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <div class="flex items-center gap-2 mb-4">
+                            <i data-lucide="brain-circuit" class="w-6 h-6" style="color: hsl(var(--accent))"></i>
+                            <h3 class="text-xl font-bold">AI Recommendations</h3>
+                        </div>
+                        <div id="recommend-skip" class="p-3 rounded-lg bg-blue-50 border-2 border-blue-200">
+                            <div class="flex gap-3">
+                                <i data-lucide="cloud-rain" class="w-6 h-6 text-blue-600 flex-shrink-0 mt-1"></i>
+                                <div>
+                                    <h4 id="ai-rec-title" class="font-bold text-blue-800"></h4>
+                                    <p id="ai-rec-body" class="text-sm text-blue-700 mt-1"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Today's Tasks -->
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="list-checks" class="w-6 h-6" style="color: hsl(var(--primary))"></i>
+                                <h3 class="text-xl font-bold">Today's Tasks</h3>
+                            </div>
+                            <button class="px-2 py-1 rounded-lg text-xs border hover:bg-gray-100">+ Add</button>
+                        </div>
+                        <div id="tasks-list" class="space-y-2">
+                            <!-- Tasks will be dynamically inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Farming Advisor Section -->
+    <section id="ai-advisor" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12" data-animate-children>
+                <h2 class="text-4xl font-bold mb-4">AI Farming Advisor</h2>
+                <p class="text-lg opacity-70">Strategic insights for crop planning and sales</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8" data-animate-children>
+                
+                <!-- Current Crop Details Card -->
+                <div class="glass-panel p-8 rounded-2xl">
+                    <div class="flex items-center gap-2 mb-6">
+                        <i data-lucide="sprout" class="w-8 h-8" style="color: hsl(var(--primary))"></i>
+                        <div>
+                            <h3 class="text-xl font-bold">Current Crop</h3>
+                            <p class="text-lg font-semibold opacity-80">Tomato (Roma)</p>
+                        </div>
+                    </div>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex justify-between items-center">
+                            <span class="opacity-70">Planting Date:</span>
+                            <span class="font-semibold">Aug 15, 2025</span>
+                        </li>
+                        <li class="flex justify-between items-center">
+                            <span class="opacity-70">Growth Stage:</span>
+                            <span class="font-semibold px-2 py-1 bg-green-100 text-green-800 rounded">Flowering</span>
+                        </li>
+                        <li class="flex justify-between items-center">
+                            <span class="opacity-70">Expected Harvest:</span>
+                            <span class="font-semibold">Nov 20-30</span>
+                        </li>
+                        <li class="flex justify-between items-center">
+                            <span class="opacity-70">Overall Health:</span>
+                            <span class="font-semibold text-green-600">85% (Good)</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- AI Crop Suggestions Card -->
+                <div class="glass-panel p-8 rounded-2xl">
+                    <div class="flex items-center gap-3 mb-6">
+                        <i data-lucide="lightbulb" class="w-8 h-8" style="color: hsl(var(--accent))"></i>
+                        <h3 class="text-xl font-bold">Next Crop Suggestions</h3>
+                    </div>
+                    <p class="text-sm opacity-70 mb-4">Based on soil data, weather forecast, and market demand:</p>
+                    <div class="space-y-3">
+                        <div class="p-4 rounded-lg bg-gray-100 border">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="font-bold text-lg">Spinach</h4>
+                                <span class="px-2 py-1 text-xs font-semibold text-green-800 bg-green-200 rounded-full">High Profit</span>
+                            </div>
+                            <p class="text-xs opacity-80 mb-3">High demand in winter, suitable for current soil NPK levels.</p>
+                            <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm border-t pt-3 mt-3">
+                                <div class="flex items-center gap-2">
+                                    <i data-lucide="dollar-sign" class="w-4 h-4 text-green-600"></i>
+                                    <div>
+                                        <p class="text-xs opacity-70">Est. Revenue</p>
+                                        <p class="font-semibold">~$1,200/acre</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <i data-lucide="calendar-days" class="w-4 h-4 text-blue-600"></i>
+                                    <div>
+                                        <p class="text-xs opacity-70">Growth Time</p>
+                                        <p class="font-semibold">40-55 days</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 rounded-lg bg-gray-100 border">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="font-bold text-lg">Lettuce</h4>
+                                <span class="px-2 py-1 text-xs font-semibold text-yellow-800 bg-yellow-200 rounded-full">Stable Market</span>
+                            </div>
+                            <p class="text-xs opacity-80 mb-3">Fast growth cycle, good for crop rotation to improve soil health.</p>
+                            <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm border-t pt-3 mt-3">
+                                <div class="flex items-center gap-2">
+                                    <i data-lucide="dollar-sign" class="w-4 h-4 text-green-600"></i>
+                                    <div>
+                                        <p class="text-xs opacity-70">Est. Revenue</p>
+                                        <p class="font-semibold">~$950/acre</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <i data-lucide="calendar-days" class="w-4 h-4 text-blue-600"></i>
+                                    <div>
+                                        <p class="text-xs opacity-70">Growth Time</p>
+                                        <p class="font-semibold">50-70 days</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Market Timing Card -->
+                <div class="glass-panel p-8 rounded-2xl">
+                    <div class="flex items-center gap-3 mb-6">
+                        <i data-lucide="trending-up" class="w-8 h-8" style="color: #3b82f6"></i>
+                        <h3 class="text-xl font-bold">Market Timing Advice</h3>
+                    </div>
+                    <p class="text-sm opacity-70 mb-4">For your current <strong>Tomato</strong> crop:</p>
+                    <div class="p-4 rounded-lg bg-blue-50 border border-blue-200 mb-4">
+                        <p class="font-semibold text-blue-800">Sell in 3-4 Weeks</p>
+                        <p class="text-sm text-blue-700 mt-1">
+                            Market price for Tomatoes is projected to <strong class="font-bold">increase by ~15%</strong>. For maximum profit, aim to sell around <strong>late November</strong>.
+                        </p>
+                    </div>
+                    <div class="relative h-24">
+                        <canvas id="marketPriceChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Pest & Disease Detection Card -->
+                <div class="glass-panel p-8 rounded-2xl">
+                    <div class="flex items-center gap-3 mb-6">
+                        <i data-lucide="bug" class="w-8 h-8 text-red-500"></i>
+                        <h3 class="text-xl font-bold">Pest & Disease Detection</h3>
+                    </div>
+                    <!-- Container for status or preview -->
+                    <div id="image-analysis-container" class="mb-4">
+                        <!-- Initial Status Box -->
+                        <div id="threat-status-box" class="p-4 rounded-lg bg-green-50 border border-green-200 text-center">
+                            <p class="font-semibold text-green-800">✅ No Threats Detected</p>
+                            <p class="text-xs text-green-700 mt-1">Last scan: Today, 9:00 AM</p>
+                        </div>
+                        <!-- Image Preview (hidden by default) -->
+                        <div id="image-preview-container" class="hidden text-center">
+                            <img id="image-preview" src="#" alt="Image Preview" class="rounded-lg max-h-40 mx-auto border bg-gray-100">
+                            <button id="remove-image-btn" class="mt-2 text-xs text-red-600 hover:underline font-semibold">Remove Image</button>
+                        </div>
+                        <!-- Analysis Result (hidden by default) -->
+                        <div id="analysis-result-container" class="hidden p-4 rounded-lg bg-red-50 border border-red-200">
+                            <h4 class="font-bold text-red-800">Result: Fungal Blight Detected</h4>
+                            <div class="text-sm text-red-700 mt-2 space-y-1">
+                                <p><strong>Confidence:</strong> 92%</p>
+                                <p><strong>Recommendation:</strong> Immediately apply a copper-based fungicide. Remove and destroy affected leaves to prevent spread.</p>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-3">Analysis complete. Please consult an expert for confirmation.</p>
+                        </div>
+                    </div>
+                    <div class="space-y-2 mb-4">
+                        <p class="text-sm opacity-70">Common threats for Tomatoes:</p>
+                        <ul class="text-xs list-disc list-inside opacity-80">
+                            <li>Blight (Fungal)</li>
+                            <li>Aphids</li>
+                            <li>Whitefly</li>
+                        </ul>
+                    </div>
+                    <input type="file" id="image-upload-input" class="hidden" accept="image/*">
+                    <button id="upload-image-btn" class="w-full py-3 rounded-lg font-semibold border flex items-center justify-center gap-2 hover:bg-gray-100 transition-colors">
+                        <i id="upload-btn-icon" data-lucide="camera" class="w-4 h-4"></i>
+                        Upload Image for Analysis
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW: MarketLink Section -->
+    <section id="marketlink" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12" data-animate-children>
+                <h2 class="text-4xl font-bold mb-4">MarketLink Direct</h2>
+                <p class="text-lg opacity-70">Connect with local buyers and sell your produce at the best price.</p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12 items-start">
+                <!-- Left Panel: Mandis & Sell Button -->
+                <div class="space-y-6" data-animate-children>
+                    <h3 class="text-2xl font-bold">Live Mandi Prices</h3>
+                    <!-- Mandi 1 -->
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <h4 class="font-bold text-lg mb-3">APMC Hubli</h4>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div class="flex justify-between border-b pb-2"><span>Tomato:</span> <span class="font-bold">₹2,100 /qtl</span></div>
+                            <div class="flex justify-between border-b pb-2"><span>Wheat:</span> <span class="font-bold">₹2,350 /qtl</span></div>
+                            <div class="flex justify-between"><span>Corn:</span> <span class="font-bold">₹1,980 /qtl</span></div>
+                            <div class="flex justify-between"><span>Onion:</span> <span class="font-bold">₹1,800 /qtl</span></div>
+                        </div>
+                    </div>
+                    <!-- Mandi 2 -->
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <h4 class="font-bold text-lg mb-3">Central Market, Belgaum</h4>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div class="flex justify-between border-b pb-2"><span>Tomato:</span> <span class="font-bold text-green-600">₹2,150 /qtl</span></div>
+                            <div class="flex justify-between border-b pb-2"><span>Wheat:</span> <span class="font-bold">₹2,320 /qtl</span></div>
+                            <div class="flex justify-between"><span>Corn:</span> <span class="font-bold">₹2,010 /qtl</span></div>
+                            <div class="flex justify-between"><span>Onion:</span> <span class="font-bold text-green-600">₹1,840 /qtl</span></div>
+                        </div>
+                    </div>
+                    <button id="sell-now-btn" class="w-full py-4 rounded-lg font-semibold text-white transition shadow-lg hover:scale-105" style="background: hsl(var(--primary));">
+                        Sell Your Produce Now
+                    </button>
+                </div>
+
+                <!-- Right Panel: AI Price Forecast -->
+                <div class="glass-panel p-8 rounded-2xl" data-animate-children>
+                    <div class="flex items-center gap-3 mb-4">
+                        <i data-lucide="line-chart" class="w-8 h-8" style="color: hsl(var(--accent));"></i>
+                        <h3 class="text-2xl font-bold">AI Price Forecast</h3>
+                    </div>
+                    <p class="text-sm opacity-70 mb-4">
+                        AI prediction for <strong>Tomato</strong> prices over the next 7 days based on market trends and weather data.
+                    </p>
+                    <div class="relative h-64">
+                        <canvas id="priceForecastChart"></canvas>
+                    </div>
+                    <div class="mt-4 p-3 rounded-lg bg-blue-50 border border-blue-200 text-sm">
+                        <p class="font-semibold text-blue-800">
+                            <i data-lucide="lightbulb" class="inline w-4 h-4 mr-1"></i>
+                            Insight: Prices are expected to rise mid-week. Consider selling on Thursday for optimal profit.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Government Schemes Section -->
+    <section id="govt-schemes" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12" data-animate-children>
+                <h2 class="text-4xl font-bold mb-4">Government Schemes & Subsidies</h2>
+                <p class="text-lg opacity-70">Discover and apply for programs that can support your farm.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" data-animate-children>
+                
+                <!-- Scheme Card 1 -->
+                <div class="glass-panel p-8 rounded-2xl">
+                    <div class="flex items-center gap-3 mb-4">
+                        <i data-lucide="landmark" class="w-8 h-8" style="color: hsl(var(--primary))"></i>
+                        <h3 class="text-xl font-bold">PM-KISAN Scheme</h3>
+                    </div>
+                    <p class="text-sm opacity-80 mb-4">Provides income support of ₹6,000 per year to all landholding farmer families.</p>
+                    <div class="text-xs space-y-1 mb-6">
+                        <p><strong class="opacity-80">Eligibility:</strong> All landholding farmers.</p>
+                        <p><strong class="opacity-80">Benefit:</strong> ₹2,000 every 4 months.</p>
+                    </div>
+                    <button class="w-full py-3 rounded-lg font-semibold border hover:bg-gray-100 transition-colors">Learn More & Apply</button>
+                </div>
+
+                <!-- Scheme Card 2 -->
+                <div class="glass-panel p-8 rounded-2xl">
+                    <div class="flex items-center gap-3 mb-4">
+                        <i data-lucide="tractor" class="w-8 h-8" style="color: hsl(var(--accent))"></i>
+                        <h3 class="text-xl font-bold">Subsidy on Farm Equipment</h3>
+                    </div>
+                    <p class="text-sm opacity-80 mb-4">Get subsidies from 50% to 80% on the purchase of agricultural machinery.</p>
+                    <div class="text-xs space-y-1 mb-6">
+                        <p><strong class="opacity-80">Eligibility:</strong> Varies by state and equipment.</p>
+                        <p><strong class="opacity-80">Benefit:</strong> Reduced cost for tractors, tillers, etc.</p>
+                    </div>
+                    <button class="w-full py-3 rounded-lg font-semibold border hover:bg-gray-100 transition-colors">Check Eligibility</button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Soil Monitor Section -->
+    <section id="soil-monitor" class="py-20 bg-white">
+        <!-- START: Integrated Offline AI Soil Monitor -->
+        <main class="container mx-auto px-6 py-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- Left Column -->
+                <div class="lg:col-span-2 space-y-8">
+    
+                    <!-- 2. Overview / Summary Card -->
+                    <section class="glass-panel p-6 rounded-2xl">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                            <div>
+                                <h2 class="text-2xl font-bold">Plot 2 – Tomato Crop</h2>
+                                <p class="text-sm text-gray-500">Last Sensor Reading: 10:35 AM</p>
+                            </div>
+                            <div class="flex items-center gap-3 p-3 rounded-lg bg-yellow-50 border border-yellow-200">
+                                <i data-lucide="alert-triangle" class="w-8 h-8 status-warning"></i>
+                                <div>
+                                    <p class="font-semibold text-yellow-800">Soil health is moderate.</p>
+                                    <p class="text-sm text-yellow-700">Moisture decreasing — irrigation needed within 4 hours.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+    
+                    <!-- 3. Live Sensor Data Display -->
+                    <section class="glass-panel p-6 rounded-2xl">
+                        <h3 class="text-xl font-bold mb-4">Live Sensor Data</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="border-b">
+                                    <tr>
+                                        <th class="pb-2 font-semibold">Parameter</th>
+                                        <th class="pb-2 font-semibold">Current</th>
+                                        <th class="pb-2 font-semibold">Ideal Range</th>
+                                        <th class="pb-2 font-semibold text-right">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b">
+                                        <td class="py-3 flex items-center gap-2"><i data-lucide="droplets" class="text-blue-500"></i> Moisture</td>
+                                        <td class="py-3 font-bold">42%</td>
+                                        <td class="py-3 text-gray-600">30–60%</td>
+                                        <td class="py-3 text-right status-good font-semibold">✅ Normal</td>
+                                    </tr>
+                                    <tr class="border-b">
+                                        <td class="py-3 flex items-center gap-2"><i data-lucide="thermometer" class="text-orange-500"></i> Temperature</td>
+                                        <td class="py-3 font-bold">27°C</td>
+                                        <td class="py-3 text-gray-600">20–35°C</td>
+                                        <td class="py-3 text-right status-good font-semibold">✅ Normal</td>
+                                    </tr>
+                                    <tr class="border-b">
+                                        <td class="py-3 flex items-center gap-2"><i data-lucide="wind" class="text-gray-500"></i> Humidity</td>
+                                        <td class="py-3 font-bold">68%</td>
+                                        <td class="py-3 text-gray-600">40–75%</td>
+                                        <td class="py-3 text-right status-good font-semibold">✅ Normal</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-3 flex items-center gap-2"><i data-lucide="flask-conical" class="text-purple-500"></i> pH</td>
+                                        <td class="py-3 font-bold">6.4</td>
+                                        <td class="py-3 text-gray-600">6.0–7.5</td>
+                                        <td class="py-3 text-right status-warning font-semibold">⚠️ Slightly Acidic</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="flex gap-4 mt-6">
+                            <button id="refresh-btn" class="px-4 py-2 rounded-lg font-semibold transition-all duration-200 bg-gray-200 text-gray-800 hover:bg-gray-300 flex-1 flex items-center justify-center"><i data-lucide="refresh-cw" class="w-4 h-4 mr-2"></i>Refresh Readings</button>
+                            <button id="run-ai-btn" class="px-4 py-2 rounded-lg font-semibold transition-all duration-200 bg-green-600 text-white hover:bg-green-700 shadow-md flex-1 flex items-center justify-center"><i data-lucide="brain" class="w-4 h-4 mr-2" id="run-ai-btn-icon"></i><span id="run-ai-btn-text">Run AI Analysis</span></button>
+                        </div>
+                    </section>
+    
+                    <!-- 4. AI Prediction & Recommendation Card -->
+                    <section id="ai-prediction-card" class="glass-panel p-6 rounded-2xl bg-green-50 border-green-200 transition-all duration-500">
+                        <h3 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="sparkles" class="text-green-600"></i>AI Prediction & Recommendation</h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-600">Soil Condition</p>
+                                    <p id="ai-soil-condition" class="text-lg font-bold">Moisture dropping rapidly</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-600">Predicted Time to Dryness</p>
+                                    <p id="ai-time-to-dryness" class="text-lg font-bold">Approx. 3 hrs 20 min</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-600">AI Confidence</p>
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div id="ai-confidence-bar" class="bg-green-600 h-2.5 rounded-full" style="width: 88%"></div>
+                                    </div>
+                                    <p id="ai-confidence-text" class="text-right font-bold text-green-700">88%</p>
+                                </div>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg border space-y-3">
+                                <h4 class="font-bold">Recommendations:</h4>
+                                <div class="text-sm">
+                                    <p class="font-semibold">💧 Irrigation:</p>
+                                    <p id="ai-rec-irrigation">Irrigate with <strong>10–12 liters per sq. meter</strong> after sunset.</p>
+                                </div>
+                                <div class="text-sm">
+                                    <p class="font-semibold">🌿 Soil Amendment:</p>
+                                    <p id="ai-rec-amendment">Add <strong>organic compost</strong> to stabilize pH.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+    
+                    <!-- NEW: Fertilizer Recommendation Card -->
+                    <section class="glass-panel p-6 rounded-2xl">
+                        <h3 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="flask-conical" class="text-purple-500"></i>Fertilizer Recommendation</h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <!-- Left side: Analysis -->
+                            <div class="space-y-3">
+                                <h4 class="font-semibold">Analysis based on current readings:</h4>
+                                <ul class="text-sm space-y-2">
+                                    <li class="flex items-start gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-green-600 mt-1 flex-shrink-0"></i><div><strong>Nitrogen (N):</strong> Levels are moderate. A gentle boost is recommended.</div></li>
+                                    <li class="flex items-start gap-2"><i data-lucide="alert-triangle" class="w-4 h-4 text-yellow-500 mt-1 flex-shrink-0"></i><div><strong>Phosphorus (P):</strong> Levels are slightly low for the flowering stage.</div></li>
+                                    <li class="flex items-start gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-green-600 mt-1 flex-shrink-0"></i><div><strong>Potassium (K):</strong> Levels are sufficient.</div></li>
+                                    <li class="flex items-start gap-2"><i data-lucide="alert-triangle" class="w-4 h-4 text-yellow-500 mt-1 flex-shrink-0"></i><div><strong>pH Level:</strong> Slightly acidic (6.4), which can limit nutrient uptake.</div></li>
+                                </ul>
+                            </div>
+                            <!-- Right side: Recommendation -->
+                            <div class="bg-white p-4 rounded-lg border border-purple-200">
+                                <h4 class="font-bold text-purple-800">Suggested Product:</h4>
+                                <p class="text-lg font-bold my-1">Bone Meal & Vermicompost Mix</p>
+                                <p class="text-sm text-gray-600">This organic mix will provide a slow release of Phosphorus (from bone meal) and gently raise the pH while improving soil structure (from vermicompost).</p>
+                                <p class="text-xs text-gray-500 mt-3">Apply 100g per plant, mixed into the topsoil.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 5. Trend Graph / Data Visualization Section -->
+                    <section class="glass-panel p-6 rounded-2xl">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold">Historical Trends</h3>
+                            <div id="time-filter-buttons" class="flex gap-1 p-1 rounded-lg bg-gray-100 border">
+                                <button data-period="today" class="px-3 py-1 text-sm rounded-md bg-white shadow">Today</button>
+                                <button data-period="7days" class="px-3 py-1 text-sm rounded-md">7 Days</button>
+                                <button data-period="30days" class="px-3 py-1 text-sm rounded-md">30 Days</button>
+                            </div>
+                        </div>
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div>
+                                <h4 class="font-semibold text-center text-sm mb-2">Moisture (%)</h4>
+                                <div class="relative h-36"><canvas id="moistureChart"></canvas></div>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-center text-sm mb-2">Temperature (°C)</h4>
+                                <div class="relative h-36"><canvas id="tempChart"></canvas></div>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-center text-sm mb-2">pH Level</h4>
+                                <div class="relative h-36"><canvas id="phChart"></canvas></div>
+                            </div>
+                        </div>
+                    </section>
+    
+                </div>
+    
+                <!-- Right Column -->
+                <div class="lg:col-span-1 space-y-8">
+    
+                    <!-- 8. Alerts / Notifications Section -->
+                    <section class="glass-panel p-6 rounded-2xl">
+                        <h3 class="text-xl font-bold mb-4">Alerts & Notifications</h3>
+                        <div class="space-y-3 max-h-64 overflow-y-auto pr-2">
+                            <div class="flex items-start gap-3 p-3 rounded-lg bg-red-50 border border-red-200">
+                                <i data-lucide="alert-triangle" class="status-critical flex-shrink-0 mt-1"></i>
+                                <div>
+                                    <p class="font-semibold text-sm">Moisture below 30% in Plot 2.</p>
+                                    <p class="text-xs text-gray-500">Today, 10:15 AM</p>
+                                    <button class="text-xs font-bold text-gray-600 mt-1">Acknowledge</button>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 p-3 rounded-lg bg-yellow-50 border border-yellow-200">
+                                <i data-lucide="flask-conical" class="status-warning flex-shrink-0 mt-1"></i>
+                                <div>
+                                    <p class="font-semibold text-sm">pH dropping fast — soil may become acidic.</p>
+                                    <p class="text-xs text-gray-500">Today, 9:40 AM</p>
+                                    <button class="text-xs font-bold text-gray-600 mt-1">Acknowledge</button>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 p-3 rounded-lg bg-gray-100 border">
+                                <i data-lucide="clock" class="text-gray-500 flex-shrink-0 mt-1"></i>
+                                <div>
+                                    <p class="font-semibold text-sm">Irrigation overdue by 4 hours.</p>
+                                    <p class="text-xs text-gray-500">Yesterday, 11:00 PM</p>
+                                    <button class="text-xs font-bold text-gray-600 mt-1">Acknowledge</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+    
+                    <!-- 6. Bluetooth Data Sync Panel -->
+                    <section class="glass-panel p-6 rounded-2xl">
+                        <h3 class="text-xl font-bold mb-4">Sync Data to Central Hub</h3>
+                        <div class="p-4 rounded-lg bg-blue-50 border border-blue-200 text-center">
+                            <p class="font-semibold text-blue-800">12 unsynced entries</p>
+                            <p class="text-xs text-blue-600">Last Sync: 10:45 AM, 31 Oct 2025</p>
+                        </div>
+                        <div class="flex gap-4 mt-4">
+                            <button class="px-4 py-2 rounded-lg font-semibold transition-all duration-200 border border-gray-300 text-gray-700 hover:bg-gray-100 flex-1 flex items-center justify-center"><i data-lucide="search" class="w-4 h-4 mr-2"></i>Scan</button>
+                            <button class="px-4 py-2 rounded-lg font-semibold transition-all duration-200 bg-blue-600 text-white hover:bg-blue-700 shadow-md flex-1 flex items-center justify-center"><i data-lucide="upload-cloud" class="w-4 h-4 mr-2"></i>Send Data</button>
+                        </div>
+                    </section>
+    
+                    <!-- 7. Local Data Storage Summary -->
+                    <section class="glass-panel p-6 rounded-2xl">
+                        <h3 class="text-xl font-bold mb-4">Device & Model Info</h3>
+                        <ul class="text-sm space-y-2 text-gray-700">
+                            <li class="flex justify-between"><span>Local records stored:</span> <span class="font-bold">125</span></li>
+                            <li class="flex justify-between"><span>Storage used:</span> <span class="font-bold">1.2 MB</span></li>
+                            <li class="flex justify-between border-t pt-2 mt-2"><span>AI Model version:</span> <span class="font-bold">v2.1 – TF Lite</span></li>
+                            <li class="flex justify-between"><span>Model last updated:</span> <span class="font-bold">15 Oct 2025</span></li>
+                        </ul>
+                        <button class="w-full mt-4 text-red-600 border-red-300 hover:bg-red-50 px-4 py-2 rounded-lg font-semibold transition-all duration-200 border flex items-center justify-center">
+                            <i data-lucide="trash-2" class="w-4 h-4 mr-2"></i>Clear Local Cache
+                        </button>
+                    </section>
+    
+                </div>
+            </div>
+        </main>
+        <!-- END: Integrated Offline AI Soil Monitor -->
+    </section>
+
+    <!-- IVR Helpline Section -->
+    <section id="ivr-helpline" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <div class="glass-panel p-8 rounded-2xl text-center max-w-3xl mx-auto" data-animate-children>
+                <div class="flex justify-center mb-4">
+                     <i data-lucide="phone-call" class="w-12 h-12" style="color: hsl(var(--primary))"></i>
+                </div>
+                <h2 class="text-3xl font-bold mb-3">Need a Human Touch?</h2>
+                <p class="text-lg opacity-80 mb-6 max-w-xl mx-auto">
+                    Not happy with the AI insights? Speak to our agricultural experts now!
+                </p>
+                <a href="tel:+18001234567" class="inline-block px-10 py-4 rounded-lg font-semibold transition shadow-lg text-white hover:scale-105" style="background: hsl(var(--primary));">
+                    📞 CALL HELPLINE
+                </a>
+                <div class="mt-8 pt-4 border-t border-gray-200 text-sm opacity-70">
+                    <p>Our 24/7 IVR system provides instant guidance. Just dial and follow the instructions:</p>
+                    <p class="mt-2 font-semibold">
+                        Press 1 for Pest Control Advice <br>
+                        Press 2 for Fertilizer & Nutrient Guidance <br>
+                        Press 3 for Market Price Updates
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t" style="background: linear-gradient(to top, rgba(151, 191, 88, 0.05), white);">
+        <div class="container mx-auto px-6 text-center">
+            <div class="flex items-center justify-center gap-3 mb-4">
+                <svg class="w-8 h-8" style="color: hsl(var(--primary))" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span class="text-2xl font-bold" style="color: hsl(var(--primary))">Agrilogy</span>
+            </div>
+            <p class="opacity-70 mb-6">Bridging the Digital Divide in Agriculture</p>
+            <p class="text-sm opacity-60">© 2025 Agrilogy. Empowering farmers with technology.</p>
+        </div>
+    </footer>
+
+    <!-- NEW: Sell Now Modal -->
+    <div id="sell-now-modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black bg-opacity-60 p-4">
+        <div id="sell-now-content" class="glass-panel p-8 rounded-2xl max-w-lg w-full relative">
+            <button id="close-sell-now-btn" class="absolute top-4 right-4 text-gray-500 hover:text-black">&times;</button>
+            <h2 class="text-2xl font-bold mb-6 text-center">Create New Listing</h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="font-semibold text-sm mb-1 block">Select Crop</label>
+                    <select class="w-full p-3 rounded-lg border bg-gray-50">
+                        <option>Tomato</option>
+                        <option>Wheat</option>
+                        <option>Corn</option>
+                        <option>Potatoes</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="font-semibold text-sm mb-1 block">Enter Quantity (in kg)</label>
+                    <input type="number" placeholder="e.g., 500" class="w-full p-3 rounded-lg border bg-gray-50">
+                </div>
+                <div>
+                    <label class="font-semibold text-sm mb-1 block">Upload Produce Photo</label>
+                    <div id="sell-image-preview-container" class="hidden items-center gap-4 mb-2">
+                        <img id="sell-image-preview" src="#" alt="Preview" class="w-16 h-16 rounded-lg object-cover border">
+                        <button id="sell-remove-image-btn" class="text-xs text-red-600 hover:underline font-semibold">Remove</button>
+                    </div>
+                    <input type="file" id="sell-image-upload" class="hidden" accept="image/*">
+                    <button id="sell-upload-btn" class="w-full p-3 rounded-lg border-2 border-dashed flex items-center justify-center gap-2 text-gray-500 hover:bg-gray-50">
+                        <i data-lucide="image-plus" class="w-5 h-5"></i> Click to Upload
+                    </button>
+                </div>
+                <button class="w-full py-3 mt-4 rounded-lg font-semibold text-white" style="background: hsl(var(--primary));">Post Listing to MarketLink</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW: How It Works Modal -->
+    <div id="how-it-works-modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black bg-opacity-60 p-4">
+        <div id="how-it-works-content" class="glass-panel p-8 rounded-2xl max-w-4xl w-full relative">
+            <button id="close-how-it-works-btn" class="absolute top-4 right-4 text-gray-500 hover:text-black">&times;</button>
+            
+            <div class="text-center mb-8">
+                <h2 class="text-4xl font-bold mb-4">How Agrilogy Works</h2>
+                <p class="text-lg opacity-70">An intelligent, step-by-step process to optimize your water usage.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+                <!-- Step 1: Farmer & Weather Inputs -->
+                <div class="glass-panel p-6 rounded-xl">
+                    <div class="flex items-center gap-3 mb-4">
+                        <i data-lucide="database" class="w-8 h-8" style="color: hsl(var(--primary))"></i>
+                        <h3 class="text-xl font-bold">1. Gather Data</h3>
+                    </div>
+                    <p class="text-sm opacity-80">The system collects farmer inputs (crop type, area) and fetches real-time weather data.</p>
+                </div>
+                <!-- Step 2: AI Prediction -->
+                <div class="glass-panel p-6 rounded-xl">
+                    <div class="flex items-center gap-3 mb-4">
+                        <i data-lucide="brain-circuit" class="w-8 h-8" style="color: hsl(var(--accent))"></i>
+                        <h3 class="text-xl font-bold">2. AI Analysis</h3>
+                    </div>
+                    <p class="text-sm opacity-80">Our AI predicts soil moisture and calculates the precise water requirement.</p>
+                </div>
+                <!-- Step 3: Context Check -->
+                <div class="glass-panel p-6 rounded-xl">
+                    <div class="flex items-center gap-3 mb-4">
+                        <i data-lucide="cloud-rain" class="w-8 h-8" style="color: #3b82f6"></i>
+                        <h3 class="text-xl font-bold">3. Context Check</h3>
+                    </div>
+                    <p class="text-sm opacity-80">It checks for rainfall probability and recent irrigation history.</p>
+                </div>
+                <!-- Step 4: Conditional Logic & Alerts -->
+                <div class="glass-panel p-6 rounded-xl lg:col-span-3">
+                    <div class="flex items-center gap-3 mb-4">
+                        <i data-lucide="git-branch" class="w-8 h-8" style="color: #8b5cf6"></i>
+                        <h3 class="text-xl font-bold">4. Smart Alerts</h3>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4 mt-4 text-sm">
+                        <div class="p-4 rounded-lg bg-green-50 border border-green-200"><p class="font-bold text-green-800 mb-2">IF Water Needed:</p><p class="text-green-700">An alert is sent with the exact amount of water required.</p></div>
+                        <div class="p-4 rounded-lg bg-blue-50 border border-blue-200"><p class="font-bold text-blue-800 mb-2">IF Water NOT Needed:</p><p class="text-blue-700">An alert is sent to save water due to expected rain.</p></div>
+                    </div>
+                </div>
+                <!-- Step 5: Reporting -->
+                <div class="glass-panel p-6 rounded-xl lg:col-start-2">
+                    <div class="flex items-center gap-3 mb-4"><i data-lucide="bar-chart-3" class="w-8 h-8" style="color: hsl(var(--primary-glow))"></i><h3 class="text-xl font-bold">5. Generate Reports</h3></div>
+                    <p class="text-sm opacity-80">All data is saved to generate insightful reports on water usage and savings.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Side Grow Animation SVG -->
+    <div id="side-plant-container" class="fixed bottom-0 left-4 z-20 w-16 h-96 pointer-events-none">
+        <svg id="side-plant" viewBox="0 0 100 400" class="w-full h-full" preserveAspectRatio="xMidYMax meet">
+            <defs>
+                <mask id="stem-mask">
+                    <!-- This rectangle will grow upwards to reveal the stem -->
+                    <rect id="stem-mask-rect" x="48" y="400" width="4" height="400" fill="white" />
+                </mask>
+            </defs>
+            <!-- Stem -->
+            <path d="M50,400 C50,300 50,200 50,0" stroke="#6a994e" stroke-width="4" fill="none" mask="url(#stem-mask)" />
+            
+            <!-- Leaves (initially hidden) -->
+            <g id="leaf1" transform="translate(50, 300) scale(0.8)"><path d="M0,0 C15,-15 35,-15 40,-30 C45,-15 25,-15 0,0" fill="#80b918" /></g>
+            <g id="leaf2" transform="translate(50, 220) scale(-0.9, 0.9)"><path d="M0,0 C15,-15 35,-15 40,-30 C45,-15 25,-15 0,0" fill="#80b918" /></g>
+            <g id="leaf3" transform="translate(50, 140) scale(1)"><path d="M0,0 C15,-15 35,-15 40,-30 C45,-15 25,-15 0,0" fill="#80b918" /></g>
+            <g id="leaf4" transform="translate(50, 60) scale(-1.1, 1.1)"><path d="M0,0 C15,-15 35,-15 40,-30 C45,-15 25,-15 0,0" fill="#80b918" /></g>
+        </svg>
+    </div>
+
+    <!-- NEW: Decorative Corner Vines -->
+    <div id="corner-vines-container" class="fixed top-0 left-0 w-full h-full z-20 pointer-events-none opacity-40">
+        <!-- Top-left vine -->
+        <svg id="vine-tl" class="absolute top-0 left-0 w-48 h-48" viewBox="0 0 200 200">
+            <path d="M1,1 C40,60 20,120 80,150 S150,120 180,199" stroke="#a7c957" stroke-width="2" fill="none" />
+        </svg>
+        <!-- Top-right vine -->
+        <svg id="vine-tr" class="absolute top-0 right-0 w-48 h-48" viewBox="0 0 200 200">
+            <path d="M199,1 C160,60 180,120 120,150 S50,120 20,199" stroke="#a7c957" stroke-width="2" fill="none" />
+        </svg>
+    </div>
+
+    <!-- NEW: Stage-based Evolution Plant -->
+    <div id="evolution-plant-container" class="fixed bottom-4 right-4 z-30 w-24 h-24 pointer-events-none">
+        <svg id="evolution-plant" viewBox="0 0 100 100">
+            <!-- Stage 1: Seed -->
+            <g id="evo-seed">
+                <ellipse cx="50" cy="85" rx="10" ry="6" fill="#a16207"/>
+            </g>
+            <!-- Stage 2: Sprout -->
+            <g id="evo-sprout" class="opacity-0"><path d="M50,85 C40,70 60,55 50,40" stroke="#84a98c" stroke-width="4" fill="none"/><path d="M50,60 C60,55 65,45 70,50" fill="#a7c957"/><path d="M50,60 C40,55 35,45 30,50" fill="#a7c957"/></g>
+            <!-- Stage 3: Flower -->
+            <g id="evo-flower" class="opacity-0"><path d="M50,85 C45,65 55,50 50,25" stroke="#52796f" stroke-width="4" fill="none"/><circle cx="50" cy="22" r="8" fill="#ffb703"/><path d="M50,22 l15,5 l-10,12 z" fill="#fb8500"/><path d="M50,22 l-15,5 l10,12 z" fill="#fb8500" transform="scale(-1, 1) translate(-100, 0)"/><path d="M50,22 l0,18 l-12,-10 z" fill="#fb8500" transform="rotate(72, 50, 22)"/><path d="M50,22 l0,18 l12,-10 z" fill="#fb8500" transform="rotate(-72, 50, 22)"/></g>
+            <!-- Stage 4: Fruit -->
+            <g id="evo-fruit" class="opacity-0"><path d="M50,85 C45,65 55,50 50,25" stroke="#588157" stroke-width="4" fill="none"/><circle cx="50" cy="35" r="15" fill="#d00000"/><path d="M50,20 Q55,25 60,20 L50,25 Z" fill="#3a5a40"/></g>
+        </svg>
+    </div>
+
+    <script>
+    (function() { // <-- Start of IIFE
+        // --- NEW: Scroll to top on page load ---
+        window.addEventListener('load', () => {
+            // Use setTimeout to ensure it runs after any other potential scripts
+            // that might affect scroll position.
+            setTimeout(() => window.scrollTo(0, 0), 0);
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // --- NEW: GSAP Scroll-triggered animations ---
+        document.addEventListener('DOMContentLoaded', () => {
+            gsap.registerPlugin(ScrollTrigger); // Register the plugin
+            const containers = gsap.utils.toArray('[data-animate-children]');
+
+            containers.forEach(container => {
+                const cards = container.children;
+                
+                gsap.set(cards, { autoAlpha: 0, y: 50 });
+
+                ScrollTrigger.create({
+                    trigger: container,
+                    start: 'top 80%',
+                    once: true,
+                    onEnter: () => {
+                        gsap.to(cards, {
+                            autoAlpha: 1,
+                            y: 0,
+                            duration: 0.8,
+                            stagger: 0.15,
+                            ease: 'power3.out'
+                        });
+                    }
+                });
+            });
+
+            // --- Side Plant Grow Animation ---
+            const plantTimeline = gsap.timeline({
+                scrollTrigger: {
+                    trigger: document.body,
+                    start: "top top",
+                    end: "bottom bottom",
+                    scrub: 2 // SLOWER & SMOOTHER: Increased from 1.5 to 2
+                }
+            });
+
+            // Set initial state of leaves
+            gsap.set(["#leaf1", "#leaf2", "#leaf3", "#leaf4"], {
+                autoAlpha: 0,
+                scale: 0,
+                transformOrigin: "0% 0%",
+                rotation: -20 // Add initial rotation
+            });
+
+            // Animate the stem growing
+            plantTimeline.to("#stem-mask-rect", { y: 0, duration: 10 }, 0);
+
+            // Animate leaves appearing at different scroll points
+            // MORE IMPRESSIVE: Added rotation and a "back.out" ease for a slight overshoot effect
+            plantTimeline.to("#leaf1", { autoAlpha: 1, scale: 0.8, rotation: 0, duration: 2, ease: "back.out(1.7)" }, 2);
+            plantTimeline.to("#leaf2", { autoAlpha: 1, scale: 0.9, rotation: 0, duration: 2, ease: "back.out(1.7)" }, 4);
+            plantTimeline.to("#leaf3", { autoAlpha: 1, scale: 1, rotation: 0, duration: 2, ease: "back.out(1.7)" }, 6);
+            plantTimeline.to("#leaf4", { autoAlpha: 1, scale: 1.1, rotation: 0, duration: 2, ease: "back.out(1.7)" }, 8);
+
+            // --- NEW: Decorative Vines Animation ---
+            const vines = gsap.utils.toArray(["#vine-tl path", "#vine-tr path"]);
+            vines.forEach(vine => {
+                const length = vine.getTotalLength();
+                gsap.set(vine, { strokeDasharray: length, strokeDashoffset: length });
+                gsap.to(vine, {
+                    strokeDashoffset: 0,
+                    duration: 3,
+                    ease: "power2.inOut",
+                    scrollTrigger: {
+                        trigger: document.body,
+                        start: "top top",
+                        end: "bottom bottom", // Animate over the full page height
+                        scrub: 3 // SLOWER & SMOOTHER: Increased from 2
+                    }
+                });
+            });
+
+            // --- NEW: Stage-based Plant Evolution ---
+            const evoTimeline = gsap.timeline({
+                scrollTrigger: {
+                    trigger: document.body,
+                    start: "top top",
+                    end: "bottom bottom",
+                    scrub: 1.5 // SLOWER: Increased from true (which defaults to 1)
+                }
+            });
+
+            // Seed -> Sprout (triggered by "How It Works" section)
+            evoTimeline.to("#evo-seed", { autoAlpha: 0, duration: 1 }, 0.1)
+                       .to("#evo-sprout", { autoAlpha: 1, duration: 1 }, 0.1);
+            // Sprout -> Flower (triggered by "Dashboard" section)
+            evoTimeline.to("#evo-sprout", { autoAlpha: 0, duration: 1 }, 0.3)
+                       .to("#evo-flower", { autoAlpha: 1, duration: 1 }, 0.3);
+            // Flower -> Fruit (triggered by "AI Advisor" section)
+            evoTimeline.to("#evo-flower", { autoAlpha: 0, duration: 1 }, 0.5)
+                       .to("#evo-fruit", { autoAlpha: 1, duration: 1 }, 0.5);
+
+            // --- NEW: How It Works Modal Logic ---
+            const showBtn = document.getElementById('show-how-it-works-btn');
+            const closeBtn = document.getElementById('close-how-it-works-btn');
+            const modal = document.getElementById('how-it-works-modal');
+
+            if (showBtn && closeBtn && modal) {
+                showBtn.addEventListener('click', () => {
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex'); // Use flex for centering
+                });
+
+                const closeModal = () => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                };
+
+                closeBtn.addEventListener('click', closeModal);
+                modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); }); // Close on backdrop click
+            }
+
+            // --- NEW: Sell Now Modal Logic ---
+            const sellNowBtn = document.getElementById('sell-now-btn');
+            const closeSellNowBtn = document.getElementById('close-sell-now-btn');
+            const sellNowModal = document.getElementById('sell-now-modal');
+
+            if (sellNowBtn && closeSellNowBtn && sellNowModal) {
+                sellNowBtn.addEventListener('click', () => {
+                    sellNowModal.classList.remove('hidden');
+                    sellNowModal.classList.add('flex');
+                });
+
+                const closeSellModal = () => {
+                    sellNowModal.classList.add('hidden');
+                    sellNowModal.classList.remove('flex');
+                };
+
+                closeSellNowBtn.addEventListener('click', closeSellModal);
+                sellNowModal.addEventListener('click', (e) => { if (e.target === sellNowModal) closeSellModal(); });
+            }
+
+            // --- NEW: Sell Now Modal Image Upload Logic ---
+            const sellUploadBtn = document.getElementById('sell-upload-btn');
+            const sellFileInput = document.getElementById('sell-image-upload');
+            const sellPreviewContainer = document.getElementById('sell-image-preview-container');
+            const sellImagePreview = document.getElementById('sell-image-preview');
+            const sellRemoveBtn = document.getElementById('sell-remove-image-btn');
+
+            if (sellUploadBtn && sellFileInput && sellPreviewContainer) {
+                sellUploadBtn.addEventListener('click', () => sellFileInput.click());
+
+                sellFileInput.addEventListener('change', (event) => {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            sellImagePreview.src = e.target.result;
+                            sellPreviewContainer.classList.remove('hidden');
+                            sellPreviewContainer.classList.add('flex');
+                            sellUploadBtn.classList.add('hidden');
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                sellRemoveBtn.addEventListener('click', () => {
+                    sellFileInput.value = '';
+                    sellImagePreview.src = '#';
+                    sellPreviewContainer.classList.add('hidden');
+                    sellPreviewContainer.classList.remove('flex');
+                    sellUploadBtn.classList.remove('hidden');
+                });
+            }
+        });
+
+        // Store chart instances
+        let moistureChart, tempChart, phChart;
+
+        // --- NEW: Farmer Data and Dashboard Updater ---
+        const farmersData = {
+            farmer1: {
+                name: "Ramesh Kumar",
+                photo: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=300&auto=format&fit=crop",
+                status: "good",
+                mainCrop: "Tomatoes",
+                mainPlot: "Plot A",
+                plots: {
+                    plotA: { name: "Plot A: Tomatoes", icon: "carrot", color: "text-orange-500", bgColor: "#fff7ed", details: `<p class="text-sm text-gray-600 mb-2">Flowering Stage</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">42%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">85%</p></div></div>` },
+                    plotB: { name: "Plot B: Wheat", icon: "barley", color: "text-yellow-600", bgColor: "#fefce8", details: `<p class="text-sm text-gray-600 mb-2">Growth Stage</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">65%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">92%</p></div></div>` },
+                    plotC: { name: "Plot C: Fallow", icon: "shovel", color: "text-slate-500", bgColor: "#f1f5f9", details: `<p class="text-sm text-gray-600 mb-2">Ready for Planting</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">55%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Nutrients</p><p class="font-bold text-lg text-yellow-500">Good</p></div></div>` },
+                    plotD: { name: "Plot D: Corn", icon: "seedling", color: "text-lime-600", bgColor: "#f7fee7", details: `<p class="text-sm text-gray-600 mb-2">Tasseling Stage</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">72%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">95%</p></div></div>` },
+                    plotE: { name: "Plot E: Potatoes", icon: "leaf", color: "text-amber-600", bgColor: "#fef3c7", details: `<p class="text-sm text-gray-600 mb-2">Tuber Initiation</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">68%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">89%</p></div></div>` },
+                },
+                recommendation: {
+                    title: "Action: Skip Irrigation",
+                    body: "Rain is expected on Wednesday. Skipping irrigation for Plot A will save water."
+                },
+                tasks: [
+                    "Check pest traps in Plot B",
+                    "Prepare Plot C for planting"
+                ]
+            },
+            farmer2: {
+                name: "Sita Devi",
+                photo: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=300&auto=format&fit=crop",
+                status: "moderate",
+                mainCrop: "Cotton",
+                mainPlot: "Field 2",
+                plots: {
+                    plotA: { name: "Field 1: Sugarcane", icon: "barley", color: "text-green-700", bgColor: "#f0fdf4", details: `<p class="text-sm text-gray-600 mb-2">Grand Growth Phase</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">75%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">98%</p></div></div>` },
+                    plotB: { name: "Field 2: Cotton", icon: "flower-2", color: "text-gray-500", bgColor: "#fafafa", details: `<p class="text-sm text-gray-600 mb-2">Boll Development</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">58%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">91%</p></div></div>` },
+                    plotC: { name: "Field 3: Fallow", icon: "shovel", color: "text-slate-500", bgColor: "#f1f5f9", details: `<p class="text-sm text-gray-600 mb-2">Ready for Planting</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">62%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Nutrients</p><p class="font-bold text-lg text-yellow-500">Good</p></div></div>` },
+                    plotD: { name: "Field 4: Fallow", icon: "shovel", color: "text-slate-500", bgColor: "#f1f5f9", details: `<p class="text-sm text-gray-600 mb-2">Ready for Planting</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">60%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Nutrients</p><p class="font-bold text-lg text-yellow-500">Good</p></div></div>` },
+                    plotE: { name: "Field 5: Fallow", icon: "shovel", color: "text-slate-500", bgColor: "#f1f5f9", details: `<p class="text-sm text-gray-600 mb-2">Ready for Planting</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">59%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Nutrients</p><p class="font-bold text-lg text-yellow-500">Good</p></div></div>` },
+                },
+                recommendation: {
+                    title: "Action: Apply Fertilizer",
+                    body: "Nitrogen levels in Field 2 (Cotton) are low. Apply urea fertilizer as per recommendation."
+                },
+                tasks: [
+                    "Apply urea to Field 2",
+                    "Scout Field 1 for pests"
+                ]
+            },
+            farmer3: {
+                name: "Vijay Singh",
+                plots: {
+                    plotA: { name: "Plot A: Mustard", icon: "flower", color: "text-yellow-500", bgColor: "#fefce8", details: `<p class="text-sm text-gray-600 mb-2">Flowering Stage</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg text-red-600">25%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-yellow-500">65%</p></div></div>` },
+                    plotB: { name: "Plot B: Chickpea", icon: "bean", color: "text-green-600", bgColor: "#f0fdf4", details: `<p class="text-sm text-gray-600 mb-2">Podding Stage</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">55%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">88%</p></div></div>` },
+                    plotC: { name: "Plot C: Fallow", icon: "shovel", color: "text-slate-500", bgColor: "#f1f5f9", details: `<p class="text-sm text-gray-600 mb-2">Ready for Planting</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">48%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Nutrients</p><p class="font-bold text-lg text-yellow-500">Good</p></div></div>` },
+                },
+                recommendation: {
+                    title: "Action: Immediate Irrigation Required",
+                    body: "Moisture in Mustard field is at a critical 25%. Irrigate immediately to prevent crop loss."
+                },
+                tasks: [
+                    "Irrigate Mustard field (Plot A) urgently.",
+                    "Check for pod borer pests in Chickpea field (Plot B)."
+                ]
+            },
+            farmer4: {
+                name: "Anjali Patel",
+                plots: {
+                    plotA: { name: "Plot A: Groundnut", icon: "peanut", color: "text-amber-700", bgColor: "#fffbeb", details: `<p class="text-sm text-gray-600 mb-2">Pegging Stage</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">62%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-yellow-500">78%</p></div></div>` },
+                    plotB: { name: "Plot B: Soybean", icon: "bean", color: "text-lime-600", bgColor: "#f7fee7", details: `<p class="text-sm text-gray-600 mb-2">Flowering Stage</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">70%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">90%</p></div></div>` },
+                },
+                recommendation: {
+                    title: "Action: Pest Alert in Groundnut Field",
+                    body: "Aphids detected in Plot A. Recommend applying neem oil solution."
+                },
+                tasks: [
+                    "Apply neem oil to Groundnut field (Plot A).",
+                    "Monitor Soybean field for yellow mosaic virus."
+                ]
+            },
+            farmer5: {
+                name: "Balwinder Singh",
+                plots: {
+                    plotA: { name: "Paddy Field 1", icon: "wheat", color: "text-cyan-600", bgColor: "#ecfeff", details: `<p class="text-sm text-gray-600 mb-2">Tillering Stage</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">85%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">94%</p></div></div>` },
+                    plotB: { name: "Paddy Field 2", icon: "wheat", color: "text-cyan-600", bgColor: "#ecfeff", details: `<p class="text-sm text-gray-600 mb-2">Tillering Stage</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">88%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">96%</p></div></div>` },
+                    plotC: { name: "Vegetable Patch", icon: "carrot", color: "text-orange-500", bgColor: "#fff7ed", details: `<p class="text-sm text-gray-600 mb-2">Harvesting</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg text-yellow-500">45%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">91%</p></div></div>` },
+                },
+                recommendation: {
+                    title: "Action: Nutrient Deficiency Detected",
+                    body: "Yellowing leaves in Vegetable Patch suggest Nitrogen deficiency. Top-dress with urea."
+                },
+                tasks: [
+                    "Top-dress Vegetable Patch with urea.",
+                    "Check water levels in Paddy Fields."
+                ]
+            }
+        };
+
+        function updateDashboard(farmerId) {
+            const farmer = farmersData[farmerId];
+            if (!farmer) return;
+
+            // 1. Update Plots
+            const plotElements = document.querySelectorAll('.flat-plot[data-plot]');
+            plotElements.forEach(plotEl => {
+                const plotId = plotEl.dataset.plot;
+                const plotData = farmer.plots[plotId];
+                const pTag = plotEl.querySelector('p');
+                const iTag = plotEl.querySelector('i');
+
+                if (plotData) {
+                    pTag.textContent = plotData.name;
+                    pTag.className = `font-bold relative z-10 mt-2 ${plotData.color.replace('text-', 'text-').replace('-500', '-800')}`;
+                    iTag.setAttribute('data-lucide', plotData.icon);
+                    iTag.className = `w-10 h-10 relative z-10 ${plotData.color}`;
+                    plotEl.style.backgroundColor = plotData.bgColor;
+                    plotEl.style.display = 'flex'; // Make it visible
+                } else {
+                    // Hide plot if no data exists for this farmer
+                    plotEl.style.display = 'none';
+                }
+            });
+            lucide.createIcons(); // Re-render icons
+
+            // 2. Update AI Recommendation
+            document.getElementById('ai-rec-title').textContent = farmer.recommendation.title;
+            document.getElementById('ai-rec-body').textContent = farmer.recommendation.body;
+
+            // 3. Update Tasks
+            const tasksList = document.getElementById('tasks-list');
+            tasksList.innerHTML = ''; // Clear existing tasks
+            farmer.tasks.forEach(taskText => {
+                const taskEl = document.createElement('div');
+                taskEl.className = 'flex items-center gap-3 p-2 rounded-lg bg-gray-100';
+                taskEl.innerHTML = `
+                    <input type="checkbox" class="mt-0">
+                    <p class="text-sm font-semibold">${taskText}</p>
+                `;
+                tasksList.appendChild(taskEl);
+            });
+
+            // 4. Update plotData for click interactions
+            Object.keys(farmer.plots).forEach(plotId => {
+                if (plotData[plotId]) {
+                    plotData[plotId].name = farmer.plots[plotId].name;
+                    plotData[plotId].details = farmer.plots[plotId].details;
+                }
+            });
+
+            // 5. Reset to default view
+            document.getElementById('plot-details-title').textContent = "Overall Conditions";
+            document.getElementById('plot-details-content').innerHTML = `<p class="text-sm text-gray-600">Click on a plot for specific details.</p>`;
+            document.querySelectorAll('.flat-plot.active').forEach(p => p.classList.remove('active'));
+        }
+
+        // Event Listener for the dropdown
+        const farmerSelector = document.getElementById('farmer-selector');
+        farmerSelector.addEventListener('change', (e) => {
+            updateDashboard(e.target.value);
+        });
+
+        // Initial load
+        updateDashboard('farmer1');
+
+        // --- NEW: Flat Farm Plot Interaction ---
+        const plotData = {
+            plotA: {
+                name: "Plot A: Tomatoes",
+                details: `
+                    <p class="text-sm text-gray-600 mb-2">Flowering Stage</p>
+                    <div class="grid grid-cols-2 gap-2 text-center">
+                        <div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">42%</p></div>
+                        <div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">85%</p></div>
+                    </div>
+                `
+            },
+            plotB: {
+                name: "Plot B: Wheat",
+                details: `
+                    <p class="text-sm text-gray-600 mb-2">Growth Stage</p>
+                    <div class="grid grid-cols-2 gap-2 text-center">
+                        <div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">65%</p></div>
+                        <div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">92%</p></div>
+                    </div>
+                `
+            },
+            plotC: {
+                name: "Plot C: Fallow",
+                details: `
+                    <p class="text-sm text-gray-600 mb-2">Ready for Planting</p>
+                    <div class="grid grid-cols-2 gap-2 text-center">
+                        <div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">55%</p></div>
+                        <div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Nutrients</p><p class="font-bold text-lg text-yellow-500">Good</p></div>
+                    </div>
+                `
+            },
+            plotD: {
+                name: "Plot D: Corn",
+                details: `
+                    <p class="text-sm text-gray-600 mb-2">Tasseling Stage</p>
+                    <div class="grid grid-cols-2 gap-2 text-center">
+                        <div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">72%</p></div>
+                        <div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">95%</p></div>
+                    </div>
+                `
+            },
+            plotE: {
+                name: "Plot E: Potatoes",
+                details: `
+                    <p class="text-sm text-gray-600 mb-2">Tuber Initiation</p>
+                    <div class="grid grid-cols-2 gap-2 text-center">
+                        <div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">68%</p></div>
+                        <div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">89%</p></div>
+                    </div>
+                `
+            }
+        };
+
+        const farmPlots = document.querySelectorAll('.flat-plot[data-plot]');
+        const detailsTitle = document.getElementById('plot-details-title');
+        const detailsContent = document.getElementById('plot-details-content');
+
+        farmPlots.forEach(plot => {
+            plot.addEventListener('click', () => {
+                const plotId = plot.dataset.plot;
+                const data = plotData[plotId];
+
+                if (data && detailsTitle && detailsContent) {
+                    // Update active state for styling
+                    farmPlots.forEach(p => p.classList.remove('active'));
+                    plot.classList.add('active');
+
+                    // Update details panel
+                    detailsTitle.textContent = data.name;
+                    detailsContent.innerHTML = data.details;
+                }
+            });
+        });
+
+        // Trigger a click on the first plot on load for a default view
+        if (farmPlots.length > 0) {
+            farmPlots[0].click();
+        }
+
+        // --- NEW: Scripts for Integrated Offline AI Module ---
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Chart.js Configuration
+        const createChart = (ctx, label, data, color) => {
+            if (!ctx) return; // Prevent errors if canvas is not found
+            const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 150);
+            gradient.addColorStop(0, `${color}40`); // 25% opacity
+            gradient.addColorStop(1, `${color}00`); // 0% opacity
+
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['-6h', '-5h', '-4h', '-3h', '-2h', '-1h', 'Now'],
+                    datasets: [{
+                        label: label,
+                        data: data,
+                        borderColor: color,
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                        backgroundColor: gradient,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: color,
+                        pointRadius: 2,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: { font: { size: 10 }, maxTicksLimit: 5 }
+                        },
+                        x: {
+                            ticks: { font: { size: 10 } },
+                            grid: { display: false }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        };
+
+        // Moisture Chart
+        moistureChart = createChart(document.getElementById('moistureChart'), 'Moisture', [55, 53, 50, 48, 46, 44, 42], '#3b82f6');
+        tempChart = createChart(document.getElementById('tempChart'), 'Temperature', [25, 26, 28, 29, 28, 27, 27], '#f97316');
+        phChart = createChart(document.getElementById('phChart'), 'pH', [6.6, 6.6, 6.5, 6.5, 6.5, 6.4, 6.4], '#8b5cf6');
+
+        // --- NEW: Trend Graph Time Filter Functionality ---
+        const trendData = {
+            today: {
+                labels: ['-6h', '-5h', '-4h', '-3h', '-2h', '-1h', 'Now'],
+                moisture: [55, 53, 50, 48, 46, 44, 42],
+                temperature: [25, 26, 28, 29, 28, 27, 27],
+                ph: [6.6, 6.6, 6.5, 6.5, 6.5, 6.4, 6.4]
+            },
+            '7days': {
+                labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Today'],
+                moisture: [65, 62, 58, 55, 50, 45, 42],
+                temperature: [22, 24, 25, 23, 26, 28, 27],
+                ph: [6.8, 6.7, 6.7, 6.6, 6.5, 6.5, 6.4]
+            },
+            '30days': {
+                labels: ['Wk 1', 'Wk 2', 'Wk 3', 'Today'],
+                moisture: [70, 60, 50, 42],
+                temperature: [20, 22, 25, 27],
+                ph: [6.9, 6.8, 6.6, 6.4]
+            }
+        };
+
+        const timeFilterButtons = document.getElementById('time-filter-buttons');
+        if (timeFilterButtons) {
+            timeFilterButtons.addEventListener('click', (e) => {
+                if (e.target.tagName !== 'BUTTON') return;
+
+                const period = e.target.dataset.period;
+                if (!period) return;
+
+                // 1. Update button styles
+                const buttons = timeFilterButtons.querySelectorAll('button');
+                buttons.forEach(button => {
+                    button.classList.remove('bg-white', 'shadow');
+                });
+                e.target.classList.add('bg-white', 'shadow');
+
+                // 2. Get new data
+                const newData = trendData[period];
+                if (!newData) return;
+
+                // 3. Update charts
+                const updateChartData = (chart, newLabels, newValues) => {
+                    if (chart) {
+                        chart.data.labels = newLabels;
+                        chart.data.datasets[0].data = newValues;
+                        chart.update();
+                    }
+                };
+
+                updateChartData(moistureChart, newData.labels, newData.moisture);
+                updateChartData(tempChart, newData.labels, newData.temperature);
+                updateChartData(phChart, newData.labels, newData.ph);
+            });
+        }
+        
+        // --- NEW: AI Analysis Button Interaction ---
+        const runAiBtn = document.getElementById('run-ai-btn');
+        const aiPredictionCard = document.getElementById('ai-prediction-card');
+
+        runAiBtn.addEventListener('click', () => {
+            // --- 1. Enter Loading State ---
+            const btnIcon = document.getElementById('run-ai-btn-icon');
+            const btnText = document.getElementById('run-ai-btn-text');
+            
+            runAiBtn.disabled = true;
+            runAiBtn.classList.add('cursor-not-allowed');
+            btnIcon.setAttribute('data-lucide', 'loader-2');
+            btnIcon.classList.add('animate-spin');
+            btnText.textContent = 'Analyzing...';
+            lucide.createIcons(); // Re-render the new icon
+
+            // Fade out the old prediction content
+            aiPredictionCard.style.opacity = '0.5';
+
+            // --- 2. Simulate AI Analysis (2-second delay) ---
+            setTimeout(() => {
+                // --- 3. Update Prediction Card with new data ---
+                document.getElementById('ai-soil-condition').textContent = 'Optimal moisture levels detected.';
+                document.getElementById('ai-time-to-dryness').textContent = 'Approx. 8 hrs 15 min';
+                
+                const newConfidence = 95;
+                document.getElementById('ai-confidence-bar').style.width = `${newConfidence}%`;
+                document.getElementById('ai-confidence-text').textContent = `${newConfidence}%`;
+
+                document.getElementById('ai-rec-irrigation').innerHTML = 'No immediate irrigation needed. Monitor in 6-8 hours.';
+                document.getElementById('ai-rec-amendment').innerHTML = 'pH is stable. No action required.';
+
+                // --- 4. Exit Loading State ---
+                runAiBtn.disabled = false;
+                runAiBtn.classList.remove('cursor-not-allowed');
+                btnIcon.setAttribute('data-lucide', 'brain');
+                btnIcon.classList.remove('animate-spin');
+                btnText.textContent = 'Run AI Analysis';
+                lucide.createIcons(); // Re-render the original icon
+
+                // Fade in the new content
+                aiPredictionCard.style.opacity = '1';
+
+                // Bonus: Add a subtle pulse effect to show it has updated
+                aiPredictionCard.classList.add('glow-pulse');
+                setTimeout(() => {
+                    aiPredictionCard.classList.remove('glow-pulse');
+                }, 2100); // Remove after one pulse cycle
+
+            }, 2000);
+        });
+
+        // Add a simple alert for the refresh button for demonstration
+        const refreshBtn = document.getElementById('refresh-btn');
+        refreshBtn.addEventListener('click', () => {
+            alert('Fetching latest sensor readings...');
+        });
+
+        // --- NEW: Market Price Projection Chart ---
+        const marketCtx = document.getElementById('marketPriceChart');
+        if (marketCtx) {
+            const marketGradient = marketCtx.getContext('2d').createLinearGradient(0, 0, 0, 100);
+            marketGradient.addColorStop(0, 'rgba(59, 130, 246, 0.3)');
+            marketGradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
+
+            new Chart(marketCtx, {
+                type: 'line',
+                data: {
+                    labels: ['-2w', 'Now', '+2w', '+4w', '+6w'],
+                    datasets: [{
+                        label: 'Projected Price',
+                        data: [100, 102, 110, 115, 112],
+                        borderColor: '#3b82f6',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                        backgroundColor: marketGradient,
+                        pointRadius: 0, // Hide points for a cleaner look
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            display: false, // Hide Y-axis
+                        },
+                        x: {
+                            ticks: { font: { size: 10 }, color: '#9ca3af' },
+                            grid: { display: false }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        // --- NEW: AI Price Forecast Chart ---
+        const priceCtx = document.getElementById('priceForecastChart');
+        if (priceCtx) {
+            const priceGradient = priceCtx.getContext('2d').createLinearGradient(0, 0, 0, 250);
+            priceGradient.addColorStop(0, 'rgba(249, 115, 22, 0.4)');
+            priceGradient.addColorStop(1, 'rgba(249, 115, 22, 0)');
+
+            new Chart(priceCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Today', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Projected Price (₹/qtl)',
+                        data: [2150, 2180, 2250, 2350, 2320, 2300, 2280],
+                        borderColor: '#f97316',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        backgroundColor: priceGradient,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#f97316',
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: { y: { beginAtZero: false } }
+                }
+            });
+        }
+
+        // --- NEW: Pest & Disease Image Upload ---
+        const uploadBtn = document.getElementById('upload-image-btn');
+        const fileInput = document.getElementById('image-upload-input');
+        const threatStatusBox = document.getElementById('threat-status-box');
+        const imagePreviewContainer = document.getElementById('image-preview-container');
+        const imagePreview = document.getElementById('image-preview');
+        const removeImageBtn = document.getElementById('remove-image-btn');
+        const analysisResultContainer = document.getElementById('analysis-result-container');
+        const uploadBtnIcon = document.getElementById('upload-btn-icon');
+
+        let currentCardState = 'initial'; // 'initial', 'preview', 'analyzing', 'result'
+
+        const resetCard = () => {
+            fileInput.value = ''; // Clear the file input
+            threatStatusBox.classList.remove('hidden');
+            imagePreviewContainer.classList.add('hidden');
+            analysisResultContainer.classList.add('hidden');
+            
+            uploadBtn.disabled = false;
+            uploadBtnIcon.setAttribute('data-lucide', 'camera');
+            uploadBtnIcon.classList.remove('animate-spin');
+            uploadBtn.lastChild.textContent = ' Upload Image for Analysis';
+            lucide.createIcons();
+            
+            currentCardState = 'initial';
+        };
+
+        if (uploadBtn && fileInput) {
+            uploadBtn.addEventListener('click', () => {
+                if (currentCardState === 'initial') {
+                    fileInput.click();
+                } else if (currentCardState === 'preview') {
+                    // --- Run Analysis ---
+                    currentCardState = 'analyzing';
+                    uploadBtn.disabled = true;
+                    uploadBtnIcon.setAttribute('data-lucide', 'loader-2');
+                    uploadBtnIcon.classList.add('animate-spin');
+                    uploadBtn.lastChild.textContent = ' Analyzing...';
+                    lucide.createIcons();
+                    
+                    setTimeout(() => {
+                        // --- Show Results ---
+                        imagePreviewContainer.classList.add('hidden');
+                        analysisResultContainer.classList.remove('hidden');
+                        
+                        uploadBtn.disabled = false;
+                        uploadBtnIcon.setAttribute('data-lucide', 'refresh-cw');
+                        uploadBtnIcon.classList.remove('animate-spin');
+                        uploadBtn.lastChild.textContent = ' Start New Analysis';
+                        lucide.createIcons();
+                        
+                        currentCardState = 'result';
+                    }, 2500); // Simulate 2.5 second analysis
+
+                } else if (currentCardState === 'result') {
+                    resetCard();
+                }
+            });
+
+            fileInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        imagePreview.src = e.target.result;
+                        threatStatusBox.classList.add('hidden');
+                        imagePreviewContainer.classList.remove('hidden');
+                        
+                        // Update button to "Analyze"
+                        uploadBtnIcon.setAttribute('data-lucide', 'scan-search');
+                        uploadBtn.lastChild.textContent = ' Analyze This Image';
+                        lucide.createIcons();
+                        
+                        currentCardState = 'preview';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            removeImageBtn.addEventListener('click', () => {
+                resetCard();
+            });
+        }
+    })(); // <-- End of IIFE
+    </script> 
+</body>
+</html>
