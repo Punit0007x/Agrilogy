@@ -563,42 +563,72 @@
                     <div class="farm-layout">
                         <!-- Plot A (Takes up more space) -->
                         <div class="farm-plot flat-plot" data-plot="plotA" style="grid-area: plotA;">
-                            <div class="relative z-10 flex flex-col items-center justify-center">
-                                <i data-lucide="carrot" class="w-12 h-12"></i>
-                                <p class="font-bold text-lg mt-2"></p>
+                            <div class="relative z-10 flex flex-col items-center justify-center text-center p-2">
+                                <div class="flex items-baseline gap-2">
+                                    <i data-lucide="carrot" class="w-10 h-10"></i>
+                                    <p class="font-bold text-lg"></p>
+                                </div>
+                                <div class="mt-4 flex items-center gap-4 text-sm font-semibold">
+                                    <span class="plot-metric-1 flex items-center gap-1"></span>
+                                    <span class="plot-metric-2 flex items-center gap-1"></span>
+                                </div>
                             </div>
                             <div class="plot-pattern"></div>
                         </div>
                         <!-- Plot B -->
                         <div class="farm-plot flat-plot" data-plot="plotB" style="grid-area: plotB;">
                             <div class="plot-pattern" style="background-image: repeating-linear-gradient(45deg, #ca8a04, #ca8a04 1px, transparent 1px, transparent 10px);"></div>
-                            <div class="relative z-10 flex flex-col items-center justify-center">
-                                <i data-lucide="barley" class="w-12 h-12"></i>
-                                <p class="font-bold text-lg mt-2"></p>
+                            <div class="relative z-10 flex flex-col items-center justify-center text-center p-2">
+                                <div class="flex items-baseline gap-2">
+                                    <i data-lucide="barley" class="w-10 h-10"></i>
+                                    <p class="font-bold text-lg"></p>
+                                </div>
+                                <div class="mt-4 flex items-center gap-4 text-sm font-semibold">
+                                    <span class="plot-metric-1 flex items-center gap-1"></span>
+                                    <span class="plot-metric-2 flex items-center gap-1"></span>
+                                </div>
                             </div>
                         </div>
                         <!-- Plot C -->
                         <div class="farm-plot flat-plot" data-plot="plotC" style="grid-area: plotC;">
                             <div class="plot-pattern" style="background-image: linear-gradient(#94a3b8 1px, transparent 1px), linear-gradient(to right, #94a3b8 1px, transparent 1px);"></div>
-                            <div class="relative z-10 flex flex-col items-center justify-center">
-                                <i data-lucide="shovel" class="w-12 h-12"></i>
-                                <p class="font-bold text-lg mt-2"></p>
+                            <div class="relative z-10 flex flex-col items-center justify-center text-center p-2">
+                                <div class="flex items-baseline gap-2">
+                                    <i data-lucide="shovel" class="w-10 h-10"></i>
+                                    <p class="font-bold text-lg"></p>
+                                </div>
+                                <div class="mt-4 flex items-center gap-4 text-sm font-semibold">
+                                    <span class="plot-metric-1 flex items-center gap-1"></span>
+                                    <span class="plot-metric-2 flex items-center gap-1"></span>
+                                </div>
                             </div>
                         </div>
                         <!-- Plot D -->
                         <div class="farm-plot flat-plot" data-plot="plotD" style="grid-area: plotD;">
                             <div class="plot-pattern" style="background-image: repeating-conic-gradient(#84cc16 0% 25%, transparent 0% 50%); background-size: 30px 30px;"></div>
-                            <div class="relative z-10 flex flex-col items-center justify-center">
-                                <i data-lucide="seedling" class="w-12 h-12"></i>
-                                <p class="font-bold text-lg mt-2"></p>
+                            <div class="relative z-10 flex flex-col items-center justify-center text-center p-2">
+                                <div class="flex items-baseline gap-2">
+                                    <i data-lucide="seedling" class="w-10 h-10"></i>
+                                    <p class="font-bold text-lg"></p>
+                                </div>
+                                <div class="mt-4 flex items-center gap-4 text-sm font-semibold">
+                                    <span class="plot-metric-1 flex items-center gap-1"></span>
+                                    <span class="plot-metric-2 flex items-center gap-1"></span>
+                                </div>
                             </div>
                         </div>
                         <!-- Plot E -->
                         <div class="farm-plot flat-plot" data-plot="plotE" style="grid-area: plotE;">
                             <div class="plot-pattern" style="background-image: repeating-linear-gradient(-45deg, #d97706, #d97706 1px, transparent 1px, transparent 6px);"></div>
-                            <div class="relative z-10 flex flex-col items-center justify-center">
-                                <i data-lucide="leaf" class="w-12 h-12 text-amber-600"></i>
-                                <p class="font-bold text-lg text-amber-800 mt-2"></p>
+                            <div class="relative z-10 flex flex-col items-center justify-center text-center p-2">
+                                <div class="flex items-baseline gap-2">
+                                    <i data-lucide="leaf" class="w-10 h-10"></i>
+                                    <p class="font-bold text-lg"></p>
+                                </div>
+                                <div class="mt-4 flex items-center gap-4 text-sm font-semibold">
+                                    <span class="plot-metric-1 flex items-center gap-1"></span>
+                                    <span class="plot-metric-2 flex items-center gap-1"></span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1069,7 +1099,12 @@
                 <div class="space-y-8" data-animate-children>
                     <!-- Controls -->
                     <div class="glass-panel p-6 rounded-2xl">
-                        <h3 class="text-xl font-bold mb-6">Simulation Controls</h3>
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold">Simulation Controls</h3>
+                            <button id="simulator-help-btn" class="px-3 py-1 rounded-lg text-sm font-semibold border hover:bg-gray-100 flex items-center gap-2">
+                                <i data-lucide="help-circle" class="w-4 h-4"></i> Strategy Guide
+                            </button>
+                        </div>
                         <div class="space-y-5">
                             <!-- NEW: Crop & Scenario Selection -->
                             <div class="grid grid-cols-2 gap-4">
@@ -1156,6 +1191,20 @@
             </div>
         </div>
     </section>
+
+    <!-- NEW: Virtual Farm Simulator Help Modal -->
+    <div id="simulator-help-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+        <div id="simulator-help-content-wrapper" class="glass-panel p-8 rounded-2xl max-w-4xl w-full relative bg-[hsl(var(--card))] transform scale-95 opacity-0 transition-all duration-300">
+            <button id="close-simulator-help-btn" class="absolute top-4 right-4 text-gray-500 hover:text-black p-2 rounded-full hover:bg-gray-200 transition-colors">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <h2 class="text-2xl font-bold mb-6 text-center">Virtual Farm Strategy Guide</h2>
+            <div id="simulator-help-content" class="max-h-[70vh] overflow-y-auto pr-4 space-y-6 text-gray-800">
+                <!-- Content will be populated by JS -->
+            </div>
+        </div>
+    </div>
+
 
     <!-- NEW: Farm Innovation Lab Section -->
     <section id="innovation-lab" class="page-section py-20 min-h-screen items-center">
@@ -2609,8 +2658,8 @@
                 name: "Ramesh Kumar",
                 location: { lat: 15.35, lon: 75.13 }, // Hubli, Karnataka
                 region: "karnataka",
-                plots: {
-                    plotA: { name: "Plot A: Tomatoes", icon: "Tomato", color: "text-red-500", bgColor: "#fef2f2", details: { stage: "Flowering Stage", metrics: [{ label: "Moisture", value: "42%" }, { label: "Health", value: "85%", valueColor: "text-green-600" }] }, moistureHistory: [55, 53, 50, 48, 46, 44, 42] },
+                plots: { // Suggestion: Changed icon from "Tomato" to "carrot" for compatibility with Lucide icons
+                    plotA: { name: "Plot A: Tomatoes", icon: "carrot", color: "text-red-500", bgColor: "#fef2f2", details: { stage: "Flowering Stage", metrics: [{ label: "Moisture", value: "42%" }, { label: "Health", value: "85%", valueColor: "text-green-600" }] }, moistureHistory: [55, 53, 50, 48, 46, 44, 42] },
                     plotB: { name: "Plot B: Wheat", icon: "barley", color: "text-yellow-600", bgColor: "#fefce8", details: { stage: "Growth Stage", metrics: [{ label: "Moisture", value: "65%" }, { label: "Health", value: "92%", valueColor: "text-green-600" }] }, moistureHistory: [75, 72, 70, 68, 66, 65, 65] },
                     plotC: { name: "Plot C: Fallow", icon: "Seeds", color: "text-slate-500", bgColor: "#f1f5f9", details: { stage: "Ready for Planting", metrics: [{ label: "Moisture", value: "55%" }, { label: "Nutrients", value: "Good", valueColor: "text-yellow-500" }] }, moistureHistory: [60, 58, 55, 55, 56, 55, 55] },
                     plotD: { name: "Plot D: Corn", icon: "seedling", color: "text-lime-600", bgColor: "#f7fee7", details: { stage: "Tasseling Stage", metrics: [{ label: "Moisture", value: "72%" }, { label: "Health", value: "95%", valueColor: "text-green-600" }] }, moistureHistory: [80, 78, 75, 74, 72, 72, 72] },
@@ -2865,15 +2914,33 @@
                 const currentPlotData = farmer.plots[plotId];
                 const pTag = plotEl.querySelector('p');
                 const iTag = plotEl.querySelector('i');
+                const metric1El = plotEl.querySelector('.plot-metric-1');
+                const metric2El = plotEl.querySelector('.plot-metric-2');
     
                 if (currentPlotData) {
-                    pTag.textContent = currentPlotData.name;
+                    // Update main plot info
+                    pTag.textContent = currentPlotData.name.split(': ')[1]; // Show only crop name
                     pTag.className = `font-bold text-lg mt-2 ${currentPlotData.color.replace('text-', 'text-').replace('-500', '-800')}`;
                     iTag.setAttribute('data-lucide', currentPlotData.icon);
                     iTag.className = `w-12 h-12 ${currentPlotData.color}`;
                     plotEl.style.backgroundColor = currentPlotData.bgColor || '';
                     plotEl.style.display = 'block'; // Make it visible
     
+                    // Update metrics
+                    const moistureMetric = currentPlotData.details.metrics.find(m => m.label === "Moisture");
+                    const healthMetric = currentPlotData.details.metrics.find(m => m.label === "Health");
+
+                    if (metric1El && moistureMetric) {
+                        metric1El.innerHTML = `<i data-lucide="droplets" class="w-4 h-4 opacity-70"></i> ${moistureMetric.value}`;
+                        metric1El.className = `plot-metric-1 flex items-center gap-1 ${currentPlotData.color.replace('-500', '-700')}`;
+                    }
+                    if (metric2El && healthMetric) {
+                        metric2El.innerHTML = `<i data-lucide="heart-pulse" class="w-4 h-4 opacity-70"></i> ${healthMetric.value}`;
+                        metric2El.className = `plot-metric-2 flex items-center gap-1 ${healthMetric.valueColor || currentPlotData.color.replace('-500', '-700')}`;
+                    } else if (metric2El) {
+                        metric2El.innerHTML = ''; // Clear if no health metric
+                    }
+
                     // Store data directly on the element for the click handler
                     plotEl.dataset.plotData = JSON.stringify({
                         name: currentPlotData.name,
@@ -2882,7 +2949,7 @@
                     });
                 } else {
                     // Hide plot if no data exists for this farmer
-                    plotEl.style.display = 'none';
+                    plotEl.style.display = 'none'; // Keep as none
                 }
             });
             lucide.createIcons(); // Re-render icons
@@ -3173,11 +3240,17 @@
                 organic: { name: "Organic", vulnerability: 0.5, cost: 50 },
                 chemical: { name: "Chemical", vulnerability: 0.1, cost: 150 },
             };
+            const fertilizerCostData = {
+                none: 0,
+                npk: 2000,
+                nitrogen: 1500,
+                organic: 2500
+            };
             // --- NEW: Data for Crops and Scenarios ---
             const cropData = {
-                tomato: { name: "Tomato", optimalIrrigation: [40, 70], baseYield: 8.5, basePrice: 4200, growthTime: 90, fertilizerSensitivity: { npk: 1.1, nitrogen: 0.9, organic: 1.0, none: 0.7 } },
-                corn: { name: "Corn", optimalIrrigation: [50, 80], baseYield: 4.0, basePrice: 8000, growthTime: 100, fertilizerSensitivity: { npk: 1.2, nitrogen: 1.1, organic: 1.0, none: 0.6 } },
-                lettuce: { name: "Lettuce", optimalIrrigation: [35, 60], baseYield: 6.0, basePrice: 5500, growthTime: 60, fertilizerSensitivity: { npk: 1.0, nitrogen: 1.1, organic: 1.05, none: 0.8 } },
+                tomato: { name: "Tomato", optimalIrrigation: [40, 70], baseYield: 8.5, basePrice: 12000, growthTime: 90, fertilizerSensitivity: { npk: 1.1, nitrogen: 0.9, organic: 1.0, none: 0.7 } },
+                corn: { name: "Corn", optimalIrrigation: [50, 80], baseYield: 4.0, basePrice: 18000, growthTime: 100, fertilizerSensitivity: { npk: 1.2, nitrogen: 1.1, organic: 1.0, none: 0.6 } },
+                lettuce: { name: "Lettuce", optimalIrrigation: [35, 60], baseYield: 6.0, basePrice: 15000, growthTime: 60, fertilizerSensitivity: { npk: 1.0, nitrogen: 1.1, organic: 1.05, none: 0.8 } },
             };
 
             const scenarioData = {
@@ -3205,6 +3278,69 @@
                     irrigationSlider.value = optimalMidpoint;
                     irrigationValue.textContent = `${optimalMidpoint}%`;
                 });
+            }
+
+            // --- NEW: Simulator Help Modal Logic ---
+            const helpBtn = document.getElementById('simulator-help-btn');
+            const helpModal = document.getElementById('simulator-help-modal');
+            const closeHelpBtn = document.getElementById('close-simulator-help-btn');
+            const helpContentWrapper = document.getElementById('simulator-help-content-wrapper');
+
+            const populateSimulatorHelp = () => {
+                const contentEl = document.getElementById('simulator-help-content');
+                
+                const createTable = (title, data, headers, rowFn) => {
+                    let tableHTML = `<div class="p-4 border rounded-lg bg-gray-50">
+                        <h4 class="font-bold text-lg mb-2">${title}</h4>
+                        <table class="w-full text-sm text-left">
+                            <thead class="border-b"><tr>${headers.map(h => `<th class="pb-1">${h}</th>`).join('')}</tr></thead>
+                            <tbody>`;
+                    for (const key in data) {
+                        tableHTML += rowFn(data[key]);
+                    }
+                    tableHTML += `</tbody></table></div>`;
+                    return tableHTML;
+                };
+
+                contentEl.innerHTML = ''; // Clear previous content
+
+                // Crop Data
+                contentEl.innerHTML += createTable('Crop Data', cropData, ['Crop', 'Optimal Irrigation', 'Base Yield', 'Base Price'],
+                    (item) => `<tr><td class="py-1 font-semibold">${item.name}</td><td>${item.optimalIrrigation.join('-')}%</td><td>${item.baseYield} t/acre</td><td>₹${item.basePrice.toLocaleString('en-IN')}</td></tr>`
+                );
+
+                // Scenario Data
+                contentEl.innerHTML += createTable('Scenario Modifiers', scenarioData, ['Scenario', 'Description'],
+                    (item) => `<tr><td class="py-1 font-semibold">${item.name}</td><td>${item.description}</td></tr>`
+                );
+
+                // Soil Data
+                contentEl.innerHTML += createTable('Soil Types', soilData, ['Soil', 'Water Retention'],
+                    (item) => `<tr><td class="py-1 font-semibold">${item.name}</td><td>${item.waterRetention === 1.0 ? 'Normal' : (item.waterRetention < 1.0 ? 'High' : 'Low')}</td></tr>`
+                );
+
+                // Pest Control Data
+                contentEl.innerHTML += createTable('Pest Control', pestControlData, ['Method', 'Vulnerability', 'Cost'],
+                    (item) => `<tr><td class="py-1 font-semibold">${item.name}</td><td>${item.vulnerability * 100}%</td><td>${item.cost} /day</td></tr>`
+                );
+            };
+
+            if (helpBtn && helpModal && closeHelpBtn) {
+                helpBtn.addEventListener('click', () => {
+                    populateSimulatorHelp();
+                    helpModal.classList.remove('hidden');
+                    helpModal.classList.add('flex');
+                    setTimeout(() => {
+                        helpContentWrapper.classList.remove('scale-95', 'opacity-0');
+                    }, 10);
+                });
+
+                const closeHelpModal = () => {
+                    helpContentWrapper.classList.add('scale-95', 'opacity-0');
+                    setTimeout(() => helpModal.classList.add('hidden'), 300);
+                };
+                closeHelpBtn.addEventListener('click', closeHelpModal);
+                helpModal.addEventListener('click', (e) => { if (e.target === helpModal) closeHelpModal(); });
             }
 
             // Update slider value display
@@ -3321,7 +3457,7 @@
                             let yieldFactor = (health / 100) * (growth / (simDuration * 0.01));
                             yieldFactor *= selectedCrop.fertilizerSensitivity[fertilizerInput];
 
-                            const totalCost = selectedPestControl.cost * simDuration; // Simple cost model
+                            const totalCost = (selectedPestControl.cost * simDuration) + (fertilizerCostData[fertilizerInput] || 0);
                             const finalYield = (selectedCrop.baseYield * yieldFactor).toFixed(1);
                             const grossRevenue = selectedCrop.basePrice * finalYield * marketBonus;
                             const finalProfit = (grossRevenue - totalCost).toFixed(0);
