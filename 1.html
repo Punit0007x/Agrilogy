@@ -20,15 +20,16 @@
         }
         
         :root {
-            --primary: 140 50% 35%;      /* Deep Green */
-            --primary-glow: 140 50% 45%;   /* Lighter Deep Green */
-            --secondary: 45 80% 60%;     /* Golden Yellow */
-            --accent: 80 60% 60%;        /* Lime Green */
-            --background: 120 20% 96%;   /* Very Pale Green */
-            --foreground: 140 30% 15%;   /* Very Dark Green */
-            --card: 120 20% 92%;         /* Light Pale Green */
-            --muted: 120 20% 94%;        /* Between background and card */
-            --border: 120 15% 88%;       /* Slightly darker pale green */
+          --primary: 120 40% 35%;      /* Deep Leaf Green */
+          --primary-glow: 120 40% 45%;   /* Brighter Leaf Green */
+          --secondary: 45 70% 60%;     /* Golden Wheat */
+          --accent: 25 50% 45%;        /* Terracotta */
+          --background: 40 30% 97%;      /* Warm Off-White */
+          --foreground: 30 25% 20%;      /* Rich Soil Brown */
+          --card: 40 25% 94%;         /* Light Beige */
+          --muted: 40 20% 92%;        /* Muted Beige */
+          --border: 40 15% 88%;       /* Soft Beige Border */
+          --success: 140 60% 40%;      /* A vibrant, positive green */
         }
         
         body {
@@ -71,15 +72,21 @@
         }
         
         .hero-bg {
-            background: linear-gradient(135deg, hsl(var(--primary) / 0.4), hsl(var(--primary-glow) / 0.5)),
-                        url('farmpic.jpeg');
-            background-size: cover;
-            background-position: center;
+          background: linear-gradient(135deg, hsl(var(--primary) / 0.4), hsl(var(--primary-glow) / 0.5)),
+                      url('farmpic.jpeg');
+          background-size: cover;
+          background-position: center;
         }
         .hero-text-shadow {
             text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
         }
         
+        /* Reverting button glow to a more subtle shadow */
+        button:hover, .hover\:scale-105:hover {
+          transform: scale(1.05);
+          box-shadow: 0 4px 15px hsl(var(--primary) / 0.2);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
         .status-good { color: hsl(var(--primary)); }
         .status-warning { color: hsl(var(--accent)); }
         .status-critical { color: #ef4444; }
@@ -191,12 +198,23 @@
 
         /* --- NEW: Flat & Visually Appealing Farm View Styles --- */
         .farm-layout {
-            @apply grid grid-cols-2 md:grid-cols-3 gap-4;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            grid-template-areas:
+                "plotA plotB"
+                "plotA plotC"
+                "plotD plotE";
             height: 800px; /* Adjust height for mobile */
         }
         @media (min-width: 768px) { /* md breakpoint */
-            .farm-layout { height: 600px; }
+            .farm-layout { 
+                grid-template-columns: repeat(3, 1fr);
+                height: 600px; 
+                grid-template-areas: "plotA plotA plotB" "plotA plotA plotC" "plotD plotE plotC"; 
+            }
         }
+
         .flat-plot {
             border: 2px solid transparent;
             cursor: pointer;
@@ -219,6 +237,49 @@
             opacity: 0.1;
             background-size: 20px 20px;
             z-index: 0;
+        }
+
+        /* --- REVISED: Dashboard Plot Flip Card Styles --- */
+        .plot-flip-card {
+            perspective: 1500px;
+            min-height: 180px; /* Ensure plots have a minimum height */
+            cursor: pointer;
+        }
+        .plot-flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.7s;
+            transform-style: preserve-3d;
+        }
+
+        .plot-flip-card[data-plot="plotA"] { grid-area: plotA; }
+        .plot-flip-card[data-plot="plotB"] { grid-area: plotB; }
+        .plot-flip-card[data-plot="plotC"] { grid-area: plotC; }
+        .plot-flip-card[data-plot="plotD"] { grid-area: plotD; }
+        .plot-flip-card[data-plot="plotE"] { grid-area: plotE; }
+
+        .plot-flip-card.is-flipped .plot-flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .plot-flip-card-front, .plot-flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 0.75rem; /* 12px */
+        }
+        .plot-flip-card-back {
+            transform: rotateY(180deg);
+        }
+        .plot-flip-card-front::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.1));
+            border-radius: 0.75rem;
+            z-index: 1;
         }
 
         /* --- NEW: Hero Section Drone Animation --- */
@@ -429,6 +490,8 @@
             <a href="#marketlink" class="agri-orb-item"><i data-lucide="line-chart" class="w-6 h-6"></i><span class="orb-label">MarketLink</span></a>
             <a href="#govt-schemes" class="agri-orb-item"><i data-lucide="landmark" class="w-6 h-6"></i><span class="orb-label">Schemes</span></a>
             <a href="#soil-monitor" class="agri-orb-item"><i data-lucide="thermometer-snowflake" class="w-6 h-6"></i><span class="orb-label">Soil Monitor</span></a>
+            <a href="#learn-and-earn" class="agri-orb-item"><i data-lucide="book-open-check" class="w-6 h-6"></i><span class="orb-label">Learn & Earn</span></a>
+            <a href="#agri-access" class="agri-orb-item"><i data-lucide="key-round" class="w-6 h-6"></i><span class="orb-label">Agri-Access</span></a>
         </div>
         <button id="agri-orb-toggle" class="w-16 h-16 rounded-full flex items-center justify-center shadow-lg relative" style="background: hsl(var(--primary));">
             <i data-lucide="plus" class="w-8 h-8 text-white transition-transform duration-300"></i>
@@ -498,35 +561,45 @@
                 <!-- Left Side: Interactive Farm Map -->
                 <div class="lg:col-span-2 glass-panel p-6 rounded-2xl">
                     <div class="farm-layout">
-                        <!-- Plot A -->
-                        <div class="flat-plot" data-plot="plotA" style="background-color: hsl(var(--card));">
-                            <div class="plot-pattern" style="background-image: radial-gradient(#f97316 1px, transparent 1px);"></div>
-                            <i data-lucide="carrot" class="w-10 h-10 relative z-10"></i>
-                            <p class="font-bold relative z-10 mt-2"></p>
+                        <!-- Plot A (Takes up more space) -->
+                        <div class="farm-plot flat-plot" data-plot="plotA" style="grid-area: plotA;">
+                            <div class="relative z-10 flex flex-col items-center justify-center">
+                                <i data-lucide="carrot" class="w-12 h-12"></i>
+                                <p class="font-bold text-lg mt-2"></p>
+                            </div>
+                            <div class="plot-pattern"></div>
                         </div>
                         <!-- Plot B -->
-                        <div class="flat-plot" data-plot="plotB">
+                        <div class="farm-plot flat-plot" data-plot="plotB" style="grid-area: plotB;">
                             <div class="plot-pattern" style="background-image: repeating-linear-gradient(45deg, #ca8a04, #ca8a04 1px, transparent 1px, transparent 10px);"></div>
-                            <i data-lucide="barley" class="w-10 h-10 relative z-10"></i>
-                            <p class="font-bold relative z-10 mt-2"></p>
+                            <div class="relative z-10 flex flex-col items-center justify-center">
+                                <i data-lucide="barley" class="w-12 h-12"></i>
+                                <p class="font-bold text-lg mt-2"></p>
+                            </div>
                         </div>
                         <!-- Plot C -->
-                        <div class="flat-plot" data-plot="plotC">
+                        <div class="farm-plot flat-plot" data-plot="plotC" style="grid-area: plotC;">
                             <div class="plot-pattern" style="background-image: linear-gradient(#94a3b8 1px, transparent 1px), linear-gradient(to right, #94a3b8 1px, transparent 1px);"></div>
-                            <i data-lucide="shovel" class="w-10 h-10 relative z-10"></i>
-                            <p class="font-bold relative z-10 mt-2"></p>
+                            <div class="relative z-10 flex flex-col items-center justify-center">
+                                <i data-lucide="shovel" class="w-12 h-12"></i>
+                                <p class="font-bold text-lg mt-2"></p>
+                            </div>
                         </div>
                         <!-- Plot D -->
-                        <div class="flat-plot" data-plot="plotD">
+                        <div class="farm-plot flat-plot" data-plot="plotD" style="grid-area: plotD;">
                             <div class="plot-pattern" style="background-image: repeating-conic-gradient(#84cc16 0% 25%, transparent 0% 50%); background-size: 30px 30px;"></div>
-                            <i data-lucide="seedling" class="w-10 h-10 relative z-10"></i>
-                            <p class="font-bold relative z-10 mt-2"></p>
+                            <div class="relative z-10 flex flex-col items-center justify-center">
+                                <i data-lucide="seedling" class="w-12 h-12"></i>
+                                <p class="font-bold text-lg mt-2"></p>
+                            </div>
                         </div>
                         <!-- Plot E -->
-                        <div class="flat-plot" data-plot="plotE">
+                        <div class="farm-plot flat-plot" data-plot="plotE" style="grid-area: plotE;">
                             <div class="plot-pattern" style="background-image: repeating-linear-gradient(-45deg, #d97706, #d97706 1px, transparent 1px, transparent 6px);"></div>
-                            <i data-lucide="leaf" class="w-10 h-10 text-amber-600 relative z-10"></i>
-                            <p class="font-bold text-amber-800 relative z-10 mt-2">Plot E: Potatoes</p>
+                            <div class="relative z-10 flex flex-col items-center justify-center">
+                                <i data-lucide="leaf" class="w-12 h-12 text-amber-600"></i>
+                                <p class="font-bold text-lg text-amber-800 mt-2"></p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -554,12 +627,14 @@
                             </div>
                         </div>
                         <h4 class="font-bold text-center text-sm opacity-70 mb-2">5-Day Forecast</h4>
-                        <div id="forecast-container" class="grid grid-cols-5 gap-2 text-center">
+                        <div id="forecast-container" class="grid grid-cols-7 gap-2 text-center">
                             <div><p class="font-bold text-xs">Today</p><i data-lucide="sun" class="w-6 h-6 mx-auto my-1 text-yellow-500"></i><p class="text-sm font-semibold">28°</p></div>
-                            <div><p class="font-bold text-xs">Tom</p><i data-lucide="cloud-sun" class="w-6 h-6 mx-auto my-1 text-gray-500"></i><p class="text-sm font-semibold">26°</p></div>
+                            <div><p class="font-bold text-xs">Tue</p><i data-lucide="cloud-sun" class="w-6 h-6 mx-auto my-1 text-gray-500"></i><p class="text-sm font-semibold">26°</p></div>
                             <div><p class="font-bold text-xs">Wed</p><i data-lucide="cloud-rain" class="w-6 h-6 mx-auto my-1 text-blue-500"></i><p class="text-sm font-semibold">24°</p></div>
                             <div><p class="font-bold text-xs">Thu</p><i data-lucide="cloud-lightning" class="w-6 h-6 mx-auto my-1 text-purple-500"></i><p class="text-sm font-semibold">25°</p></div>
                             <div><p class="font-bold text-xs">Fri</p><i data-lucide="sun" class="w-6 h-6 mx-auto my-1 text-yellow-500"></i><p class="text-sm font-semibold">27°</p></div>
+                            <div><p class="font-bold text-xs">Sat</p><i data-lucide="sun" class="w-6 h-6 mx-auto my-1 text-yellow-500"></i><p class="text-sm font-semibold">29°</p></div>
+                            <div><p class="font-bold text-xs">Sun</p><i data-lucide="cloud-sun" class="w-6 h-6 mx-auto my-1 text-gray-500"></i><p class="text-sm font-semibold">28°</p></div>
                         </div>
                     </div>
 
@@ -1082,6 +1157,46 @@
         </div>
     </section>
 
+    <!-- NEW: Farm Innovation Lab Section -->
+    <section id="innovation-lab" class="page-section py-20 min-h-screen items-center">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16" data-animate-children>
+                <h2 class="text-4xl font-bold mb-4">Farm Innovation Lab</h2>
+                <p class="text-lg opacity-70 max-w-2xl mx-auto">Explore the future of agriculture. Click a card to see how modern technology can revolutionize farming.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8" data-animate-children>
+                <!-- Card 1: Drone Technology -->
+                <div class="innovation-card glass-panel p-8 rounded-2xl text-center cursor-pointer group" data-tech="drone">
+                    <i data-lucide="drone" class="w-16 h-16 mx-auto mb-4 transition-transform duration-300 group-hover:scale-110" style="color: hsl(var(--primary));"></i>
+                    <h3 class="text-xl font-bold mb-2">Drone Technology</h3>
+                    <p class="text-sm opacity-80">Precision spraying, crop monitoring, and field mapping from the sky.</p>
+                </div>
+
+                <!-- Card 2: Hydroponics -->
+                <div class="innovation-card glass-panel p-8 rounded-2xl text-center cursor-pointer group" data-tech="hydroponics">
+                    <i data-lucide="sprout" class="w-16 h-16 mx-auto mb-4 transition-transform duration-300 group-hover:scale-110" style="color: hsl(var(--accent));"></i>
+                    <h3 class="text-xl font-bold mb-2">Hydroponics</h3>
+                    <p class="text-sm opacity-80">Growing plants without soil, using nutrient-rich water solutions.</p>
+                </div>
+
+                <!-- Card 3: Vertical Farming -->
+                <div class="innovation-card glass-panel p-8 rounded-2xl text-center cursor-pointer group" data-tech="vertical-farming">
+                    <i data-lucide="layers" class="w-16 h-16 mx-auto mb-4 transition-transform duration-300 group-hover:scale-110" style="color: hsl(var(--secondary));"></i>
+                    <h3 class="text-xl font-bold mb-2">Vertical Farming</h3>
+                    <p class="text-sm opacity-80">Growing crops in stacked layers to maximize space and yield.</p>
+                </div>
+
+                <!-- Card 4: IoT Sensors -->
+                <div class="innovation-card glass-panel p-8 rounded-2xl text-center cursor-pointer group" data-tech="iot-sensors">
+                    <i data-lucide="wifi" class="w-16 h-16 mx-auto mb-4 transition-transform duration-300 group-hover:scale-110" style="color: #3b82f6;"></i>
+                    <h3 class="text-xl font-bold mb-2">IoT Sensors</h3>
+                    <p class="text-sm opacity-80">Real-time data on soil moisture, nutrients, and health sent to your phone.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- NEW: MarketLink Section -->
     <section id="marketlink" class="page-section py-20 min-h-screen items-center">
         <div class="container mx-auto px-6">
@@ -1120,6 +1235,289 @@
                             <i data-lucide="lightbulb" class="inline w-4 h-4 mr-1"></i>
                             <span>Loading insight...</span>
                         </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW: Agri-Venture Hub Section -->
+    <section id="agri-venture" class="page-section py-20 min-h-screen items-center">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12" data-animate-children>
+                <h2 class="text-4xl font-bold mb-4">Agri-Venture Hub</h2>
+                <p class="text-lg opacity-70">Turn your farm into a thriving business.</p>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8 items-start">
+                <!-- Left Column: Profit Calculator -->
+                <div class="lg:col-span-2 space-y-8">
+                    <div class="glass-panel p-8 rounded-2xl">
+                        <div class="flex items-center gap-3 mb-6">
+                            <i data-lucide="calculator" class="w-8 h-8" style="color: hsl(var(--primary));"></i>
+                            <h3 class="text-2xl font-bold">Profitability Calculator</h3>
+                        </div>
+                        
+                        <!-- Calculator Inputs -->
+                        <div class="grid md:grid-cols-2 gap-6 mb-8">
+                            <div>
+                                <label for="calc-crop" class="font-semibold text-sm mb-2 block">Select Crop</label>
+                                <select id="calc-crop" class="w-full p-3 rounded-lg border bg-gray-50">
+                                    <option value="tomato" selected>Tomato</option>
+                                    <option value="wheat">Wheat</option>
+                                    <option value="sugarcane">Sugarcane</option>
+                                    <option value="cotton">Cotton</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="calc-area" class="font-semibold text-sm mb-2 block">Enter Area (in Acres)</label>
+                                <input type="number" id="calc-area" value="1" min="0.1" step="0.1" class="w-full p-3 rounded-lg border bg-gray-50">
+                            </div>
+                        </div>
+
+                        <!-- Calculator Results -->
+                        <div id="calc-results" class="p-6 rounded-xl bg-green-50 border-2 border-green-200 space-y-4">
+                            <h4 class="text-xl font-bold text-center text-green-800 mb-4">Estimated Income Report</h4>
+                            <div class="grid md:grid-cols-3 gap-4 text-center">
+                                <div class="p-3 bg-white rounded-lg border">
+                                    <p class="text-sm opacity-70">Est. ROI</p>
+                                    <p id="calc-roi" class="text-3xl font-bold text-green-600">150%</p>
+                                </div>
+                                <div class="p-3 bg-white rounded-lg border">
+                                    <p class="text-sm opacity-70">Break-Even Point</p>
+                                    <p id="calc-breakeven" class="text-3xl font-bold text-orange-600">4 months</p>
+                                </div>
+                                <div class="p-3 bg-white rounded-lg border">
+                                    <p class="text-sm opacity-70">Market Trend</p>
+                                    <div id="calc-trend" class="flex items-center justify-center gap-1">
+                                        <i data-lucide="trending-up" class="w-8 h-8 text-blue-600"></i>
+                                        <span class="text-2xl font-bold text-blue-600">Upward</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-xs text-gray-600 pt-4 border-t text-center">
+                                <p>Estimates are based on ideal conditions and average market rates. Actual results may vary.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Agripreneurs Showcase -->
+                    <div class="glass-panel p-8 rounded-2xl">
+                        <h3 class="text-2xl font-bold text-center mb-8">Inspiring Agripreneurs</h3>
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Card 1 -->
+                            <div class="text-center p-4 rounded-lg bg-gray-50 border">
+                                <h4 class="font-bold">Priya Sharma</h4>
+                                <p class="text-xs text-gray-500 mb-2">Pune, MH</p>
+                                <p class="text-xs opacity-80">Started with hydroponics, now supplies to 20+ restaurants.</p>
+                            </div>
+                            <!-- Card 2 -->
+                            <div class="text-center p-4 rounded-lg bg-gray-50 border">
+                                <h4 class="font-bold">Raj Singh</h4>
+                                <p class="text-xs text-gray-500 mb-2">Ludhiana, PB</p>
+                                <p class="text-xs opacity-80">Built a farm-to-table app connecting 100+ local farmers to consumers.</p>
+                            </div>
+                            <!-- Card 3 -->
+                            <div class="text-center p-4 rounded-lg bg-gray-50 border">
+                                <h4 class="font-bold">Anika Reddy</h4>
+                                <p class="text-xs text-gray-500 mb-2">Guntur, AP</p>
+                                <p class="text-xs opacity-80">Pioneered a subscription box for organic spices, exporting to 5 countries.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Startup Toolkit -->
+                <div class="lg:sticky top-24">
+                    <div class="glass-panel p-8 rounded-2xl">
+                        <div class="flex items-center gap-3 mb-6">
+                            <i data-lucide="rocket" class="w-8 h-8" style="color: hsl(var(--accent));"></i>
+                            <h3 class="text-2xl font-bold">Agri-Startup Toolkit</h3>
+                        </div>
+                        <div class="space-y-4">
+                            <a href="#" class="block p-4 rounded-lg bg-[hsl(var(--muted))] border hover:border-green-400 hover:bg-green-50 transition-colors">
+                                <div class="flex items-center gap-3">
+                                    <i data-lucide="landmark" class="w-6 h-6 text-green-700"></i>
+                                    <div>
+                                        <h4 class="font-bold">Govt. Incubation Programs</h4>
+                                        <p class="text-xs opacity-80">Access RKVY-RAFTAAR, NIDHI-PRAYAS, and more.</p>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="#" class="block p-4 rounded-lg bg-[hsl(var(--muted))] border hover:border-yellow-400 hover:bg-yellow-50 transition-colors">
+                                <div class="flex items-center gap-3">
+                                    <i data-lucide="users" class="w-6 h-6 text-yellow-700"></i>
+                                    <div>
+                                        <h4 class="font-bold">FPO Formation Guide</h4>
+                                        <p class="text-xs opacity-80">Step-by-step guide to forming a Farmer Producer Organisation.</p>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="#" class="block p-4 rounded-lg bg-[hsl(var(--muted))] border hover:border-blue-400 hover:bg-blue-50 transition-colors">
+                                <div class="flex items-center gap-3">
+                                    <i data-lucide="dollar-sign" class="w-6 h-6 text-blue-700"></i>
+                                    <div>
+                                        <h4 class="font-bold">Startup Funding Options</h4>
+                                        <p class="text-xs opacity-80">Explore NABARD funds, Agri-Udaan, and venture capital.</p>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="#" class="block p-4 rounded-lg bg-[hsl(var(--muted))] border hover:border-purple-400 hover:bg-purple-50 transition-colors">
+                                <div class="flex items-center gap-3">
+                                    <i data-lucide="file-text" class="w-6 h-6 text-purple-700"></i>
+                                    <div>
+                                        <h4 class="font-bold">Business Plan Templates</h4>
+                                        <p class="text-xs opacity-80">Download templates for your agri-business proposal.</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <button class="w-full mt-8 py-3 rounded-lg font-semibold text-gray-100 transition shadow-lg hover:scale-105" style="background: hsl(var(--primary));">
+                            Start My Agri-Venture Plan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW: Learn & Earn Section -->
+    <section id="learn-and-earn" class="page-section py-20 min-h-screen items-center">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12" data-animate-children>
+                <h2 class="text-4xl font-bold mb-4">Learn & Earn: Skill Up for Success</h2>
+                <p class="text-lg opacity-70 max-w-3xl mx-auto">Connect certified agricultural skills with real-world job opportunities and increase your income.</p>
+            </div>
+
+            <!-- "Learn & Earn" Banners -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16" data-animate-children>
+                <!-- Banner 1: Drone Operator -->
+                <div class="glass-panel p-6 rounded-2xl flex flex-col items-center text-center hover:shadow-xl transition-shadow">
+                    <i data-lucide="drone" class="w-16 h-16 mb-4" style="color: hsl(var(--primary));"></i>
+                    <h3 class="text-xl font-bold">Drone Piloting & Data Analysis</h3>
+                    <p class="text-sm opacity-80 mt-2 mb-4">Master drone operations for crop monitoring, spraying, and mapping.</p>
+                    <div class="mt-auto w-full p-4 rounded-lg bg-green-50 border border-green-200">
+                        <p class="text-xs font-semibold text-green-800">EARN AS:</p>
+                        <p class="font-bold text-green-900">Certified Agri-Drone Operator</p>
+                    </div>
+                </div>
+                <!-- Banner 2: Soil Testing -->
+                <div class="glass-panel p-6 rounded-2xl flex flex-col items-center text-center hover:shadow-xl transition-shadow">
+                    <i data-lucide="test-tube-2" class="w-16 h-16 mb-4" style="color: hsl(var(--accent));"></i>
+                    <h3 class="text-xl font-bold">Advanced Soil Testing</h3>
+                    <p class="text-sm opacity-80 mt-2 mb-4">Learn to analyze soil health and provide nutrient management advice.</p>
+                    <div class="mt-auto w-full p-4 rounded-lg bg-yellow-50 border border-yellow-200">
+                        <p class="text-xs font-semibold text-yellow-800">EARN AS:</p>
+                        <p class="font-bold text-yellow-900">Soil Health Advisor</p>
+                    </div>
+                </div>
+                <!-- Banner 3: Agri-Marketing -->
+                <div class="glass-panel p-6 rounded-2xl flex flex-col items-center text-center hover:shadow-xl transition-shadow">
+                    <i data-lucide="store" class="w-16 h-16 mb-4" style="color: hsl(var(--secondary));"></i>
+                    <h3 class="text-xl font-bold">Digital Agri-Marketing</h3>
+                    <p class="text-sm opacity-80 mt-2 mb-4">Connect directly with buyers and manage supply chains using digital tools.</p>
+                    <div class="mt-auto w-full p-4 rounded-lg bg-blue-50 border border-blue-200">
+                        <p class="text-xs font-semibold text-blue-800">EARN AS:</p>
+                        <p class="font-bold text-blue-900">FPO Manager or Supply Chain Lead</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certified Courses & Resources -->
+            <div class="grid lg:grid-cols-2 gap-12 items-start">
+                <!-- Left: Certified Courses -->
+                <div class="space-y-6" data-animate-children>
+                    <h3 class="text-2xl font-bold">Certified Skill Courses</h3>
+                    <div class="space-y-4">
+                        <!-- Course 1 -->
+                        <div class="glass-panel p-4 rounded-xl flex items-center gap-4">
+                            <div class="p-3 bg-gray-200 rounded-lg"><i data-lucide="tractor" class="w-6 h-6 text-gray-700"></i></div>
+                            <div class="flex-1">
+                                <p class="font-bold">Certificate in Farm Mechanization</p>
+                                <p class="text-xs opacity-70">Offered by: Krishi Vigyan Kendra (KVK)</p>
+                            </div>
+                            <a href="#" class="px-4 py-2 rounded-lg font-semibold text-sm border hover:bg-gray-100 transition-colors">Enroll Now</a>
+                        </div>
+                        <!-- Course 2 -->
+                        <div class="glass-panel p-4 rounded-xl flex items-center gap-4">
+                            <div class="p-3 bg-gray-200 rounded-lg"><i data-lucide="sprout" class="w-6 h-6 text-gray-700"></i></div>
+                            <div class="flex-1">
+                                <p class="font-bold">Organic Farming Practices</p>
+                                <p class="text-xs opacity-70">Offered by: ICAR</p>
+                            </div>
+                            <a href="#" class="px-4 py-2 rounded-lg font-semibold text-sm border hover:bg-gray-100 transition-colors">Enroll Now</a>
+                        </div>
+                        <!-- Course 3 -->
+                        <div class="glass-panel p-4 rounded-xl flex items-center gap-4">
+                            <div class="p-3 bg-gray-200 rounded-lg"><i data-lucide="archive" class="w-6 h-6 text-gray-700"></i></div>
+                            <div class="flex-1">
+                                <p class="font-bold">Post-Harvest Management</p>
+                                <p class="text-xs opacity-70">Offered by: FICCI</p>
+                            </div>
+                            <a href="#" class="px-4 py-2 rounded-lg font-semibold text-sm border hover:bg-gray-100 transition-colors">Enroll Now</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right: Online Training -->
+                <div class="glass-panel p-8 rounded-2xl" data-animate-children>
+                    <h3 class="text-2xl font-bold mb-4">Free Online Training</h3>
+                    <p class="text-sm opacity-70 mb-6">Start learning right away with these curated video playlists from experts.</p>
+                    <div class="space-y-4">
+                        <a href="#" class="block p-4 rounded-lg bg-red-50 border border-red-200 hover:bg-red-100 transition-colors"><div class="flex items-center gap-3"><i data-lucide="youtube" class="w-8 h-8 text-red-600"></i><div><p class="font-bold text-red-800">Modern Farming Techniques Playlist</p><p class="text-xs text-red-700">Watch on YouTube</p></div></div></a>
+                        <a href="#" class="block p-4 rounded-lg bg-blue-50 border border-blue-200 hover:bg-blue-100 transition-colors"><div class="flex items-center gap-3"><i data-lucide="youtube" class="w-8 h-8 text-blue-600"></i><div><p class="font-bold text-blue-800">Agri-Business & Marketing Guide</p><p class="text-xs text-blue-700">Watch on YouTube</p></div></div></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW: Agri-Access Initiative Section -->
+    <section id="agri-access" class="page-section py-20 min-h-screen items-center">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12" data-animate-children>
+                <h2 class="text-4xl font-bold mb-4">Agri-Access Initiative</h2>
+                <p class="text-lg opacity-70 max-w-3xl mx-auto">Start your farming journey, even without owning land. Explore innovative models for the next generation of agripreneurs.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" data-animate-children>
+                <!-- Card 1: Land Share Connect -->
+                <div class="glass-panel p-8 rounded-2xl flex flex-col text-center hover:shadow-xl transition-shadow">
+                    <div class="flex-grow">
+                        <i data-lucide="handshake" class="w-16 h-16 mx-auto mb-4" style="color: hsl(var(--primary));"></i>
+                        <h3 class="text-xl font-bold mb-2">Land Share Connect</h3>
+                        <p class="text-sm opacity-80">Partner with landowners. You bring the skill and effort, they provide the land. Farm together and share the profits.</p>
+                    </div>
+                    <div class="mt-8 flex flex-col sm:flex-row gap-3">
+                        <a href="#" class="flex-1 px-4 py-3 rounded-lg font-semibold text-sm border hover:bg-gray-100 transition-colors">Find Land</a>
+                        <a href="#" class="flex-1 px-4 py-3 rounded-lg font-semibold text-sm border hover:bg-gray-100 transition-colors">List Your Land</a>
+                    </div>
+                </div>
+
+                <!-- Card 2: Adopt a Plot -->
+                <div class="glass-panel p-8 rounded-2xl flex flex-col text-center hover:shadow-xl transition-shadow">
+                    <div class="flex-grow">
+                        <i data-lucide="piggy-bank" class="w-16 h-16 mx-auto mb-4" style="color: hsl(var(--accent));"></i>
+                        <h3 class="text-xl font-bold mb-2">Adopt a Plot</h3>
+                        <p class="text-sm opacity-80">Invest a small amount in a real farm plot. Track its growth, see the process, and earn a share of the harvest—all virtually from your dashboard.</p>
+                    </div>
+                    <div class="mt-8">
+                        <a href="#" class="w-full block px-4 py-3 rounded-lg font-semibold text-white transition shadow-lg hover:scale-105" style="background: hsl(var(--primary));">
+                            Explore Virtual Plots
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Card 3: Co-operative Micro-Farms -->
+                <div class="glass-panel p-8 rounded-2xl flex flex-col text-center hover:shadow-xl transition-shadow">
+                    <div class="flex-grow">
+                        <i data-lucide="pie-chart" class="w-16 h-16 mx-auto mb-4" style="color: hsl(var(--secondary));"></i>
+                        <h3 class="text-xl font-bold mb-2">Co-operative Micro-Farms</h3>
+                        <p class="text-sm opacity-80">Join hands with others in your community. Crowdfund a local micro-farm, share the responsibilities, and divide the rewards as a team.</p>
+                    </div>
+                    <div class="mt-8">
+                        <a href="#" class="w-full block px-4 py-3 rounded-lg font-semibold border hover:bg-gray-100 transition-colors">
+                            Find Local Co-ops
+                        </a>
                     </div>
                 </div>
             </div>
@@ -1398,6 +1796,40 @@
             <p class="text-sm opacity-60">© 2025 Agrilogy. Empowering farmers with technology.</p>
         </div>
     </footer>
+
+    <!-- NEW: Innovation Lab Modal -->
+    <div id="innovation-lab-modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+        <div id="innovation-lab-content" class="glass-panel p-8 rounded-2xl max-w-4xl w-full relative bg-[hsl(var(--card))] transform scale-95 opacity-0">
+            <button id="close-innovation-lab-btn" class="absolute top-4 right-4 text-gray-500 hover:text-black p-2 rounded-full hover:bg-gray-200 transition-colors">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <!-- Left: Visual & Description -->
+                <div>
+                    <h2 id="lab-modal-title" class="text-3xl font-bold mb-4">Technology Name</h2>
+                    <div id="lab-modal-visual" class="h-48 bg-gray-200 rounded-lg mb-4 flex items-center justify-center">
+                        <!-- Animation or image will go here -->
+                    </div>
+                    <p id="lab-modal-description" class="text-sm opacity-80">Description of the technology and its benefits for modern farming.</p>
+                </div>
+
+                <!-- Right: Cost-Benefit Analysis -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-center">Cost vs. Benefit Analysis</h3>
+                    <div class="relative h-64">
+                        <canvas id="lab-modal-chart"></canvas>
+                    </div>
+                    <div class="mt-4 p-3 rounded-lg bg-green-50 border border-green-200 text-sm">
+                        <p id="lab-modal-insight" class="font-semibold text-green-800">
+                            <i data-lucide="trending-up" class="inline w-4 h-4 mr-1"></i>
+                            <span>Insight on profitability.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- NEW: AgriMitra Modal -->
     <div id="agrimitra-modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black bg-opacity-60 p-4">
@@ -1762,6 +2194,18 @@
             const menuItems = gsap.utils.toArray('.agri-orb-item');
             let menuOpen = false;
 
+            // Add learn and earn to the menu
+            const learnAndEarnItem = `<a href="#learn-and-earn" class="agri-orb-item"><i data-lucide="book-open-check" class="w-6 h-6"></i><span class="orb-label">Learn & Earn</span></a>`;
+            document.getElementById('agri-orb-items').insertAdjacentHTML('beforeend', learnAndEarnItem);
+
+            // Add agri-access to the menu
+            const agriAccessItem = `<a href="#agri-access" class="agri-orb-item"><i data-lucide="key-round" class="w-6 h-6"></i><span class="orb-label">Agri-Access</span></a>`;
+            document.getElementById('agri-orb-items').insertAdjacentHTML('beforeend', agriAccessItem);
+
+            // Add innovation lab to the menu
+            const innovationLabItem = `<a href="#innovation-lab" class="agri-orb-item"><i data-lucide="flask-conical" class="w-6 h-6"></i><span class="orb-label">Innovation Lab</span></a>`;
+            document.getElementById('agri-orb-items').insertAdjacentHTML('beforeend', innovationLabItem);
+
             // Set initial state: invisible, scaled down, and shifted to the left
             gsap.set(menuItems, { scale: 0, autoAlpha: 0, x: -40 });
 
@@ -1807,7 +2251,7 @@
         });
 
         // Smooth scroll for anchor links
-        // --- MODIFIED: Section Toggling Logic ---
+// --- MODIFIED: Section Toggling Logic ---
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -1953,6 +2397,103 @@
                 sellNowModal.addEventListener('click', (e) => { if (e.target === sellNowModal) closeSellModal(); });
             }
 
+            // --- NEW: Innovation Lab Modal Logic ---
+            const innovationCards = document.querySelectorAll('.innovation-card');
+            const labModal = document.getElementById('innovation-lab-modal');
+            const closeLabBtn = document.getElementById('close-innovation-lab-btn');
+            let labChartInstance;
+
+            const labData = {
+                drone: {
+                    title: 'Drone Technology',
+                    description: 'Agricultural drones equipped with multispectral sensors can monitor crop health, identify stress areas, and apply pesticides or fertilizers with surgical precision. This reduces waste, lowers costs, and increases overall field efficiency.',
+                    visual: `<lord-icon src="https://cdn.lordicon.com/jdatDKGW.json" trigger="loop" delay="1500" colors="primary:hsl(var(--primary)),secondary:hsl(var(--accent))" style="width:150px;height:150px"></lord-icon>`,
+                    chartData: { costs: [5000, 1500], benefits: [0, 8000] }, // [Initial, Recurring], [Initial, Recurring]
+                    insight: 'Drones can increase yield by up to 5% and reduce input costs by 15-20%.'
+                },
+                hydroponics: {
+                    title: 'Hydroponics',
+                    description: 'This soilless cultivation technique grows plants in a nutrient-rich water solution. It allows for farming in areas with poor soil, uses up to 90% less water than traditional farming, and enables faster growth cycles in a controlled environment.',
+                    visual: `<lord-icon src="https://cdn.lordicon.com/zqqvyuff.json" trigger="loop" delay="1500" colors="primary:hsl(var(--primary)),secondary:hsl(var(--success))" style="width:150px;height:150px"></lord-icon>`,
+                    chartData: { costs: [15000, 2000], benefits: [0, 25000] },
+                    insight: 'Higher initial setup cost, but can yield 2-5x more produce per square foot annually.'
+                },
+                'vertical-farming': {
+                    title: 'Vertical Farming',
+                    description: 'Crops are grown in vertically stacked layers, often integrated with hydroponics and LED lighting. This method drastically reduces land requirements, allowing farms to operate in urban centers, reducing transportation costs and ensuring fresh produce year-round.',
+                    visual: `<lord-icon src="https://cdn.lordicon.com/dnoiydox.json" trigger="loop" delay="1500" colors="primary:hsl(var(--primary)),secondary:hsl(var(--secondary))" style="width:150px;height:150px"></lord-icon>`,
+                    chartData: { costs: [40000, 8000], benefits: [0, 60000] },
+                    insight: 'Extremely high yield per square foot, but significant energy costs for lighting.'
+                },
+                'iot-sensors': {
+                    title: 'IoT Sensors',
+                    description: 'A network of smart sensors placed in the field collects real-time data on soil moisture, temperature, pH, and nutrient levels. This data is sent to the cloud, providing farmers with actionable insights to optimize irrigation and fertilization, saving resources.',
+                    visual: `<lord-icon src="https://cdn.lordicon.com/uqpazftn.json" trigger="loop" delay="1500" colors="primary:#3b82f6,secondary:hsl(var(--primary))" style="width:150px;height:150px"></lord-icon>`,
+                    chartData: { costs: [1000, 100], benefits: [0, 3000] },
+                    insight: 'Low initial cost with a quick return by reducing water usage by up to 30%.'
+                }
+            };
+
+            const openLabModal = (tech) => {
+                const data = labData[tech];
+                if (!data) return;
+
+                document.getElementById('lab-modal-title').textContent = data.title;
+                document.getElementById('lab-modal-description').textContent = data.description;
+                document.getElementById('lab-modal-visual').innerHTML = data.visual;
+                document.getElementById('lab-modal-insight').querySelector('span').textContent = data.insight;
+
+                const chartCtx = document.getElementById('lab-modal-chart').getContext('2d');
+                if (labChartInstance) {
+                    labChartInstance.destroy();
+                }
+                labChartInstance = new Chart(chartCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Initial Investment', 'Annual Recurring'],
+                        datasets: [
+                            {
+                                label: 'Costs ($)',
+                                data: data.chartData.costs,
+                                backgroundColor: 'hsl(var(--accent) / 0.7)',
+                                borderColor: 'hsl(var(--accent))',
+                                borderWidth: 2,
+                                borderRadius: 4,
+                            },
+                            {
+                                label: 'Benefits ($)',
+                                data: data.chartData.benefits,
+                                backgroundColor: 'hsl(var(--success) / 0.7)',
+                                borderColor: 'hsl(var(--success))',
+                                borderWidth: 2,
+                                borderRadius: 4,
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: { beginAtZero: true, ticks: { callback: value => '$' + value/1000 + 'k' } },
+                            x: { grid: { display: false } }
+                        },
+                        plugins: { legend: { position: 'top' } }
+                    }
+                });
+
+                labModal.classList.remove('hidden');
+                labModal.classList.add('flex');
+            };
+
+            const closeLabModal = () => {
+                labModal.classList.add('hidden');
+                labModal.classList.remove('flex');
+            };
+
+            innovationCards.forEach(card => card.addEventListener('click', () => openLabModal(card.dataset.tech)));
+            closeLabBtn.addEventListener('click', closeLabModal);
+            labModal.addEventListener('click', (e) => { if (e.target === labModal) closeLabModal(); });
+
             // --- NEW: Sell Now Modal Image Upload Logic ---
             const sellUploadBtn = document.getElementById('sell-upload-btn');
             const sellFileInput = document.getElementById('sell-image-upload');
@@ -2069,11 +2610,11 @@
                 location: { lat: 15.35, lon: 75.13 }, // Hubli, Karnataka
                 region: "karnataka",
                 plots: {
-                    plotA: { name: "Plot A: Tomatoes", icon: "carrot", color: "text-orange-500", bgColor: "#fff7ed", details: `<p class="text-sm text-gray-600 mb-2">Flowering Stage</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">42%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">85%</p></div></div>`, moistureHistory: [55, 53, 50, 48, 46, 44, 42] },
-                    plotB: { name: "Plot B: Wheat", icon: "barley", color: "text-yellow-600", bgColor: "#fefce8", details: `<p class="text-sm text-gray-600 mb-2">Growth Stage</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">65%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">92%</p></div></div>`, moistureHistory: [75, 72, 70, 68, 66, 65, 65] },
-                    plotC: { name: "Plot C: Fallow", icon: "shovel", color: "text-slate-500", bgColor: "#f1f5f9", details: `<p class="text-sm text-gray-600 mb-2">Ready for Planting</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">55%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Nutrients</p><p class="font-bold text-lg text-yellow-500">Good</p></div></div>`, moistureHistory: [60, 58, 55, 55, 56, 55, 55] },
-                    plotD: { name: "Plot D: Corn", icon: "seedling", color: "text-lime-600", bgColor: "#f7fee7", details: `<p class="text-sm text-gray-600 mb-2">Tasseling Stage</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">72%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">95%</p></div></div>`, moistureHistory: [80, 78, 75, 74, 72, 72, 72] },
-                    plotE: { name: "Plot E: Potatoes", icon: "leaf", color: "text-amber-600", bgColor: "#fef3c7", details: `<p class="text-sm text-gray-600 mb-2">Tuber Initiation</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">68%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">89%</p></div></div>`, moistureHistory: [72, 71, 70, 68, 68, 69, 68] },
+                    plotA: { name: "Plot A: Tomatoes", icon: "Tomato", color: "text-red-500", bgColor: "#fef2f2", details: { stage: "Flowering Stage", metrics: [{ label: "Moisture", value: "42%" }, { label: "Health", value: "85%", valueColor: "text-green-600" }] }, moistureHistory: [55, 53, 50, 48, 46, 44, 42] },
+                    plotB: { name: "Plot B: Wheat", icon: "barley", color: "text-yellow-600", bgColor: "#fefce8", details: { stage: "Growth Stage", metrics: [{ label: "Moisture", value: "65%" }, { label: "Health", value: "92%", valueColor: "text-green-600" }] }, moistureHistory: [75, 72, 70, 68, 66, 65, 65] },
+                    plotC: { name: "Plot C: Fallow", icon: "Seeds", color: "text-slate-500", bgColor: "#f1f5f9", details: { stage: "Ready for Planting", metrics: [{ label: "Moisture", value: "55%" }, { label: "Nutrients", value: "Good", valueColor: "text-yellow-500" }] }, moistureHistory: [60, 58, 55, 55, 56, 55, 55] },
+                    plotD: { name: "Plot D: Corn", icon: "seedling", color: "text-lime-600", bgColor: "#f7fee7", details: { stage: "Tasseling Stage", metrics: [{ label: "Moisture", value: "72%" }, { label: "Health", value: "95%", valueColor: "text-green-600" }] }, moistureHistory: [80, 78, 75, 74, 72, 72, 72] },
+                    plotE: { name: "Plot E: Potatoes", icon: "leaf", color: "text-amber-600", bgColor: "#fef3c7", details: { stage: "Tuber Initiation", metrics: [{ label: "Moisture", value: "68%" }, { label: "Health", value: "89%", valueColor: "text-green-600" }] }, moistureHistory: [72, 71, 70, 68, 68, 69, 68] },
                 },
                 tasks: [
                     { id: Date.now() + 1, text: "Check pest traps in Plot B", completed: false },
@@ -2106,9 +2647,9 @@
                 location: { lat: 26.85, lon: 80.95 }, // Lucknow, UP
                 region: "uttar_pradesh",
                 plots: {
-                    plotA: { name: "Field 1: Sugarcane", icon: "barley", color: "text-green-700", bgColor: "#f0fdf4", details: `<p class="text-sm text-gray-600 mb-2">Grand Growth Phase</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">75%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">98%</p></div></div>`, moistureHistory: [80, 82, 80, 78, 76, 75, 75] },
-                    plotB: { name: "Field 2: Cotton", icon: "flower-2", color: "text-gray-500", bgColor: "#fafafa", details: `<p class="text-sm text-gray-600 mb-2">Boll Development</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">58%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">91%</p></div></div>`, moistureHistory: [65, 64, 62, 60, 58, 58, 58] },
-                    plotC: { name: "Field 3: Fallow", icon: "shovel", color: "text-slate-500", bgColor: "#f1f5f9", details: `<p class="text-sm text-gray-600 mb-2">Ready for Planting</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">62%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Nutrients</p><p class="font-bold text-lg text-yellow-500">Good</p></div></div>`, moistureHistory: [65, 64, 63, 62, 62, 62, 62] },
+                    plotA: { name: "Field 1: Sugarcane", icon: "barley", color: "text-green-700", bgColor: "#f0fdf4", details: { stage: "Grand Growth Phase", metrics: [{ label: "Moisture", value: "75%" }, { label: "Health", value: "98%", valueColor: "text-green-600" }] }, moistureHistory: [80, 82, 80, 78, 76, 75, 75] },
+                    plotB: { name: "Field 2: Cotton", icon: "flower-2", color: "text-gray-500", bgColor: "#fafafa", details: { stage: "Boll Development", metrics: [{ label: "Moisture", value: "58%" }, { label: "Health", value: "91%", valueColor: "text-green-600" }] }, moistureHistory: [65, 64, 62, 60, 58, 58, 58] },
+                    plotC: { name: "Field 3: Fallow", icon: "shovel", color: "text-slate-500", bgColor: "#f1f5f9", details: { stage: "Ready for Planting", metrics: [{ label: "Moisture", value: "62%" }, { label: "Nutrients", value: "Good", valueColor: "text-yellow-500" }] }, moistureHistory: [65, 64, 63, 62, 62, 62, 62] },
                 },
                 tasks: [
                     { id: Date.now() + 3, text: "Apply urea to Field 2", completed: false },
@@ -2136,16 +2677,17 @@
                 }
             },
             farmer3: {
-                name: "Vijay Singh",
-                location: { lat: 26.91, lon: 75.79 }, // Jaipur, Rajasthan
-                region: "rajasthan",
+                name: "Aditi Singh",
+                location: { lat: 28.70, lon: 77.10 }, // Delhi
+                region: "delhi",
                 plots: {
-                    plotA: { name: "Plot A: Mustard", icon: "flower", color: "text-yellow-500", bgColor: "#fefce8", details: `<p class="text-sm text-gray-600 mb-2">Flowering Stage</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg text-red-600">25%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-yellow-500">65%</p></div></div>`, moistureHistory: [45, 40, 35, 30, 28, 26, 25] },
-                    plotB: { name: "Plot B: Chickpea", icon: "bean", color: "text-green-600", bgColor: "#f0fdf4", details: `<p class="text-sm text-gray-600 mb-2">Podding Stage</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">55%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">88%</p></div></div>`, moistureHistory: [65, 62, 60, 58, 56, 55, 55] },
-                    plotC: { name: "Plot C: Fallow", icon: "shovel", color: "text-slate-500", bgColor: "#f1f5f9", details: `<p class="text-sm text-gray-600 mb-2">Ready for Planting</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">48%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Nutrients</p><p class="font-bold text-lg text-yellow-500">Good</p></div></div>`, moistureHistory: [55, 54, 52, 50, 48, 48, 48] },
+                    plotA: { name: "Rooftop Veggies", icon: "carrot", color: "text-red-500", bgColor: "#fef2f2", details: { stage: "Vegetative Growth", metrics: [{ label: "Moisture", value: "68%" }, { label: "Health", value: "94%", valueColor: "text-green-600" }] }, moistureHistory: [75, 72, 70, 68, 68, 68, 68] },
+                    plotB: { name: "Herb Garden", icon: "leaf", color: "text-green-500", bgColor: "#f0fdf4", details: { stage: "Post-Harvest", metrics: [{ label: "Moisture", value: "35%" }, { label: "Soil Prep", value: "Needed", valueColor: "text-amber-600" }] }, moistureHistory: [45, 42, 40, 38, 35, 35, 35] },
+                    plotC: { name: "Compost Area", icon: "recycle", color: "text-yellow-700", bgColor: "#fefce8", details: { stage: "Early Growth", metrics: [{ label: "Moisture", value: "78%" }, { label: "Health", value: "96%", valueColor: "text-green-600" }] }, moistureHistory: [80, 78, 78, 78, 79, 78, 78] },
+                    plotD: { name: "Flower Patch", icon: "flower", color: "text-pink-500", bgColor: "#fdf2f8", details: { stage: "Ready for Harvest", metrics: [{ label: "Moisture", value: "40%" }, { label: "Maturity", value: "99%", valueColor: "text-blue-600" }] }, moistureHistory: [50, 48, 45, 42, 40, 40, 40] },
                 },
                 tasks: [
-                    { id: Date.now() + 5, text: "Irrigate Mustard field (Plot A) urgently.", completed: false },
+                    { id: Date.now() + 5, text: "Harvest rooftop tomatoes", completed: false },
                     { id: Date.now() + 6, text: "Check for pod borer pests in Chickpea field (Plot B).", completed: false }
                 ],
                 currentCrop: {
@@ -2174,8 +2716,8 @@
                 location: { lat: 23.02, lon: 72.57 }, // Ahmedabad, Gujarat
                 region: "gujarat",
                 plots: {
-                    plotA: { name: "Plot A: Groundnut", icon: "peanut", color: "text-amber-700", bgColor: "#fffbeb", details: `<p class="text-sm text-gray-600 mb-2">Pegging Stage</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">62%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-yellow-500">78%</p></div></div>`, moistureHistory: [70, 68, 66, 65, 63, 62, 62] },
-                    plotB: { name: "Plot B: Soybean", icon: "bean", color: "text-lime-600", bgColor: "#f7fee7", details: `<p class="text-sm text-gray-600 mb-2">Flowering Stage</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">70%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">90%</p></div></div>`, moistureHistory: [75, 74, 72, 71, 70, 70, 70] },
+                    plotA: { name: "Plot A: Groundnut", icon: "peanut", color: "text-amber-700", bgColor: "#fffbeb", details: { stage: "Pegging Stage", metrics: [{ label: "Moisture", value: "62%" }, { label: "Health", value: "78%", valueColor: "text-yellow-500" }] }, moistureHistory: [70, 68, 66, 65, 63, 62, 62] },
+                    plotB: { name: "Plot B: Soybean", icon: "bean", color: "text-lime-600", bgColor: "#f7fee7", details: { stage: "Flowering Stage", metrics: [{ label: "Moisture", value: "70%" }, { label: "Health", value: "90%", valueColor: "text-green-600" }] }, moistureHistory: [75, 74, 72, 71, 70, 70, 70] },
                 },
                 recommendation: {
                     title: "Action: Pest Alert in Groundnut Field",
@@ -2210,9 +2752,9 @@
                 location: { lat: 31.63, lon: 74.87 }, // Amritsar, Punjab
                 region: "punjab",
                 plots: {
-                    plotA: { name: "Paddy Field 1", icon: "wheat", color: "text-cyan-600", bgColor: "#ecfeff", details: `<p class="text-sm text-gray-600 mb-2">Tillering Stage</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">85%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">94%</p></div></div>`, moistureHistory: [90, 88, 86, 85, 85, 85, 85] },
-                    plotB: { name: "Paddy Field 2", icon: "wheat", color: "text-cyan-600", bgColor: "#ecfeff", details: `<p class="text-sm text-gray-600 mb-2">Tillering Stage</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg">88%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">96%</p></div></div>`, moistureHistory: [92, 90, 88, 88, 88, 88, 88] },
-                    plotC: { name: "Vegetable Patch", icon: "carrot", color: "text-orange-500", bgColor: "#fff7ed", details: `<p class="text-sm text-gray-600 mb-2">Harvesting</p><div class="grid grid-cols-2 gap-2 text-center"><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Moisture</p><p class="font-bold text-lg text-yellow-500">45%</p></div><div class="p-2 bg-gray-100 rounded-lg"><p class="text-xs opacity-70">Health</p><p class="font-bold text-lg text-green-600">91%</p></div></div>`, moistureHistory: [60, 55, 50, 48, 46, 45, 45] },
+                    plotA: { name: "Paddy Field 1", icon: "wheat", color: "text-cyan-600", bgColor: "#ecfeff", details: { stage: "Tillering Stage", metrics: [{ label: "Moisture", value: "85%" }, { label: "Health", value: "94%", valueColor: "text-green-600" }] }, moistureHistory: [90, 88, 86, 85, 85, 85, 85] },
+                    plotB: { name: "Paddy Field 2", icon: "wheat", color: "text-cyan-600", bgColor: "#ecfeff", details: { stage: "Tillering Stage", metrics: [{ label: "Moisture", value: "88%" }, { label: "Health", value: "96%", valueColor: "text-green-600" }] }, moistureHistory: [92, 90, 88, 88, 88, 88, 88] },
+                    plotC: { name: "Vegetable Patch", icon: "carrot", color: "text-orange-500", bgColor: "#fff7ed", details: { stage: "Harvesting", metrics: [{ label: "Moisture", value: "45%", valueColor: "text-yellow-500" }, { label: "Health", value: "91%", valueColor: "text-green-600" }] }, moistureHistory: [60, 55, 50, 48, 46, 45, 45] },
                 },
                 tasks: [
                     { id: Date.now() + 8, text: "Top-dress Vegetable Patch with urea.", completed: true },
@@ -2250,46 +2792,6 @@
             { title: "Action: Soil Health", body: "The pH in Plot C is slightly acidic. Consider applying lime before the next planting cycle to improve nutrient uptake." },
             { title: "Action: Water Management", body: "Forecast predicts a dry spell. Ensure your drip irrigation system is functioning optimally to conserve water." }
         ];
-
-        // --- NEW: Weather API Functions ---
-        const API_KEY = 'YOUR_OPENWEATHERMAP_API_KEY'; // <-- IMPORTANT: Replace with your actual key
-
-        const fetchWeather = async (lat, lon) => {
-            const forecastContainer = document.getElementById('forecast-container');
-            if (API_KEY === 'YOUR_OPENWEATHERMAP_API_KEY') {
-                forecastContainer.innerHTML = `<p class="text-xs text-center text-red-500 col-span-5">Please add an OpenWeatherMap API key to fetch real data.</p>`;
-                return;
-            }
-            try {
-                const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`);
-                if (!response.ok) throw new Error('Weather data not available.');
-                const data = await response.json();
-                updateWeatherUI(data);
-            } catch (error) {
-                console.error("Weather fetch error:", error);
-                forecastContainer.innerHTML = `<p class="text-xs text-center text-yellow-600 col-span-5">Could not load weather data.</p>`;
-            }
-        };
-
-        const updateWeatherUI = (data) => {
-            const forecastContainer = document.getElementById('forecast-container');
-            forecastContainer.innerHTML = ''; // Clear previous forecast
-
-            // Get forecast for the next 5 days (one entry per day around noon)
-            const dailyForecasts = data.list.filter(item => item.dt_txt.includes("12:00:00"));
-
-            dailyForecasts.slice(0, 5).forEach((day, index) => {
-                const date = new Date(day.dt * 1000);
-                const dayName = index === 0 ? 'Today' : date.toLocaleDateString('en-US', { weekday: 'short' });
-                const iconCode = day.weather[0].icon;
-                const temp = Math.round(day.main.temp);
-                const iconUrl = `https://openweathermap.org/img/wn/${iconCode}.png`;
-
-                forecastContainer.innerHTML += `
-                    <div><p class="font-bold text-xs">${dayName}</p><img src="${iconUrl}" alt="${day.weather[0].description}" class="w-8 h-8 mx-auto"><p class="text-sm font-semibold">${temp}°</p></div>
-                `;
-            });
-        };
 
         // --- NEW: Function to create the mini-chart for plot details ---
         const createDetailChart = (data) => {
@@ -2355,32 +2857,36 @@
         function updateDashboard(farmerId) {
             const farmer = farmersData[farmerId];
             if (!farmer) return;
-
-            // Fetch weather for the new farmer (if API key is present)
-            fetchWeather(farmer.location.lat, farmer.location.lon);
-
+    
             // 1. Update Plots
-            const plotElements = document.querySelectorAll('.flat-plot[data-plot]');
+            const plotElements = document.querySelectorAll('.farm-plot[data-plot]');
             plotElements.forEach(plotEl => {
                 const plotId = plotEl.dataset.plot;
-                const plotData = farmer.plots[plotId];
+                const currentPlotData = farmer.plots[plotId];
                 const pTag = plotEl.querySelector('p');
                 const iTag = plotEl.querySelector('i');
-
-                if (plotData) {
-                    pTag.textContent = plotData.name;
-                    pTag.className = `font-bold relative z-10 mt-2 ${plotData.color.replace('text-', 'text-').replace('-500', '-800')}`;
-                    iTag.setAttribute('data-lucide', plotData.icon);
-                    iTag.className = `w-10 h-10 relative z-10 ${plotData.color}`;
-                    plotEl.style.backgroundColor = plotData.bgColor;
-                    plotEl.style.display = 'flex'; // Make it visible
+    
+                if (currentPlotData) {
+                    pTag.textContent = currentPlotData.name;
+                    pTag.className = `font-bold text-lg mt-2 ${currentPlotData.color.replace('text-', 'text-').replace('-500', '-800')}`;
+                    iTag.setAttribute('data-lucide', currentPlotData.icon);
+                    iTag.className = `w-12 h-12 ${currentPlotData.color}`;
+                    plotEl.style.backgroundColor = currentPlotData.bgColor || '';
+                    plotEl.style.display = 'block'; // Make it visible
+    
+                    // Store data directly on the element for the click handler
+                    plotEl.dataset.plotData = JSON.stringify({
+                        name: currentPlotData.name,
+                        details: currentPlotData.details,
+                        moistureHistory: currentPlotData.moistureHistory
+                    });
                 } else {
                     // Hide plot if no data exists for this farmer
                     plotEl.style.display = 'none';
                 }
             });
             lucide.createIcons(); // Re-render icons
-
+    
             // 2. Update AI Recommendation
             const randomRec = aiRecommendations[Math.floor(Math.random() * aiRecommendations.length)];
             document.getElementById('ai-rec-title').textContent = randomRec.title;
@@ -2428,22 +2934,14 @@
                 });
             });
 
-            // 4. Update plotData for click interactions
-            Object.keys(farmer.plots).forEach(plotId => {
-                if (plotData[plotId]) {
-                    plotData[plotId].moistureHistory = farmer.plots[plotId].moistureHistory; // Update history data
-                    plotData[plotId].name = farmer.plots[plotId].name;
-                    plotData[plotId].details = farmer.plots[plotId].details;
-                }
-            });
-
-            // 5. Reset to default view
+            // 4. Reset to default view and trigger click on first plot
             document.getElementById('plot-details-title').textContent = "Overall Conditions";
             document.getElementById('plot-details-content').innerHTML = `
                 <p class="text-sm text-gray-600">Click on a plot for specific details.</p>
                 <div class="mt-4 h-24 bg-gray-100 rounded-lg flex items-center justify-center"><p class="text-xs text-gray-400">No plot selected</p></div>
             `;
-            document.querySelectorAll('.flat-plot.active').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.farm-plot.active').forEach(p => p.classList.remove('active'));
+            setTimeout(() => plotElements[0]?.click(), 100); // Click the first available plot
         }
         
         function updateAiAdvisor(farmerId) {
@@ -2906,31 +3404,44 @@
             });
         });
 
-        // --- NEW: Flat Farm Plot Interaction ---
+        // --- REVISED: Farm Plot Interaction Logic ---
         document.addEventListener('DOMContentLoaded', () => {
-            const farmPlots = document.querySelectorAll('.flat-plot[data-plot]');
+            const farmLayout = document.querySelector('.farm-layout');
             const detailsTitle = document.getElementById('plot-details-title');
             const detailsContent = document.getElementById('plot-details-content');
-
-            farmPlots.forEach(plot => {
-                plot.addEventListener('click', () => {
-                    const plotId = plot.dataset.plot;
-                    const data = plotData[plotId];
-
-                    if (data && data.name && detailsTitle && detailsContent) {
-                        // Update active state for styling
-                        farmPlots.forEach(p => p.classList.remove('active'));
-                        plot.classList.add('active');
-
-                        // Update details panel
-                        detailsTitle.textContent = data.name;
-                        detailsContent.innerHTML = data.details;
-                        createDetailChart(data.moistureHistory);
-                    }
-                });
+    
+            // Use event delegation for efficiency
+            farmLayout.addEventListener('click', (e) => {
+                const plotEl = e.target.closest('.farm-plot');
+                if (!plotEl) return;
+    
+                // Deactivate all other plots
+                farmLayout.querySelectorAll('.farm-plot').forEach(p => p.classList.remove('active'));
+    
+                // Activate the clicked plot
+                plotEl.classList.add('active');
+    
+                // Parse the data stored on the element
+                const data = JSON.parse(plotEl.dataset.plotData || '{}');
+    
+                // Update the side panel with details for the clicked plot
+                if (data.name && detailsTitle && detailsContent) {
+                    detailsTitle.textContent = data.name;
+    
+                    const metricsHtml = data.details.metrics.map(metric => `
+                        <div class="p-2 bg-gray-100 rounded-lg">
+                            <p class="text-xs opacity-70">${metric.label}</p>
+                            <p class="font-bold text-lg ${metric.valueColor || ''}">${metric.value}</p>
+                        </div>
+                    `).join('');
+    
+                    detailsContent.innerHTML = `<p class="text-sm text-gray-600 mb-2">${data.details.stage}</p><div class="grid grid-cols-2 gap-2 text-center">${metricsHtml}</div>`;
+    
+                    createDetailChart(data.moistureHistory);
+                }
             });
-
             // Trigger a click on the first plot on load for a default view
+            // This ensures the side panel is populated and the first card is flipped
             setTimeout(() => {
                 if (farmPlots.length > 0) {
                     farmPlots[0].click();
@@ -3123,6 +3634,48 @@
             alert('Fetching latest sensor readings...');
         });
 
+        // --- NEW: Profit Calculator Logic ---
+        const calcCropSelect = document.getElementById('calc-crop');
+        const calcAreaInput = document.getElementById('calc-area');
+
+        const calculatorData = {
+            tomato: { roi: 150, breakeven: 4, trend: 'upward' },
+            wheat: { roi: 80, breakeven: 6, trend: 'stable' },
+            sugarcane: { roi: 120, breakeven: 10, trend: 'stable' },
+            cotton: { roi: 95, breakeven: 7, trend: 'downward' }
+        };
+
+        const updateCalculator = () => {
+            const crop = calcCropSelect.value;
+            const area = parseFloat(calcAreaInput.value) || 1;
+            const data = calculatorData[crop];
+
+            if (!data) return;
+
+            // Adjust ROI based on area (economy of scale)
+            const adjustedRoi = data.roi + (Math.log(area) * 10);
+            document.getElementById('calc-roi').textContent = `${Math.round(adjustedRoi)}%`;
+
+            // Adjust breakeven
+            document.getElementById('calc-breakeven').textContent = `${data.breakeven} months`;
+
+            // Update trend
+            const trendEl = document.getElementById('calc-trend');
+            if (data.trend === 'upward') {
+                trendEl.innerHTML = `<i data-lucide="trending-up" class="w-8 h-8 text-blue-600"></i><span class="text-2xl font-bold text-blue-600">Upward</span>`;
+            } else if (data.trend === 'downward') {
+                trendEl.innerHTML = `<i data-lucide="trending-down" class="w-8 h-8 text-red-600"></i><span class="text-2xl font-bold text-red-600">Downward</span>`;
+            } else {
+                trendEl.innerHTML = `<i data-lucide="trending-up" class="w-8 h-8 text-gray-500"></i><span class="text-2xl font-bold text-gray-500">Stable</span>`;
+            }
+            lucide.createIcons();
+        };
+
+        if (calcCropSelect && calcAreaInput) {
+            calcCropSelect.addEventListener('change', updateCalculator);
+            calcAreaInput.addEventListener('input', updateCalculator);
+            updateCalculator(); // Initial calculation
+        }
     })(); // <-- End of IIFE
     </script>
 </body>
@@ -3224,7 +3777,7 @@
                 }, 1500 + Math.random() * 1000);
             });
         });
-    })(); // <-- End of IIFE
+    })(); 
     </script>
 </body>
 </html>
